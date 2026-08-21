@@ -8,6 +8,7 @@ const SCREENS = ['setupScreen', 'quizScreen', 'resultsScreen', 'statsScreen', 'r
 function showScreen(id) {
   SCREENS.forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
   window.scrollTo(0, 0);
+  if (id === 'setupScreen' && typeof Quiz !== 'undefined' && Quiz.renderDashboard) Quiz.renderDashboard();
 }
 
 function applyTheme(theme) {

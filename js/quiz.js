@@ -22,6 +22,7 @@ const Quiz = (() => {
     buildChapterList();
     buildDomainSelect();
     refreshCountUI();
+    renderDashboard();
 
     document.getElementById('adaptiveToggle').addEventListener('click', () => {
       adaptiveMode = !adaptiveMode;
@@ -65,6 +66,7 @@ const Quiz = (() => {
     });
     document.getElementById('readinessBtn').addEventListener('click', () => { buildReadiness(); showScreen('readinessScreen'); });
     document.getElementById('readinessBackBtn').addEventListener('click', () => showScreen('setupScreen'));
+    document.getElementById('dashNeedsPracticeTile').addEventListener('click', () => { buildReadiness(); showScreen('readinessScreen'); });
 
     // quiz controls
     document.getElementById('submitBtn').addEventListener('click', () => gradeCurrent(session.idx));
@@ -84,13 +86,13 @@ const Quiz = (() => {
     document.getElementById('clearStatsBtn').addEventListener('click', () => {
       if (confirm('Clear all MC quiz stats? This cannot be undone.')) {
         localStorage.removeItem(PERF_KEY);
-        buildChapterList(); refreshCountUI(); buildStats();
+        buildChapterList(); refreshCountUI(); buildStats(); renderDashboard();
       }
     });
     document.getElementById('exportStatsBtn').addEventListener('click', exportStats);
     document.getElementById('importFile').addEventListener('change', e => {
       const f = e.target.files[0];
-      if (f) importStatsFile(f, () => { buildChapterList(); refreshCountUI(); buildStats(); });
+      if (f) importStatsFile(f, () => { buildChapterList(); refreshCountUI(); buildStats(); renderDashboard(); });
     });
 
     // lightbox
@@ -400,6 +402,20 @@ const Quiz = (() => {
     showScreen('resultsScreen');
   }
 
+  /* Setup-screen dashboard: day streak, questions practiced, and a "needs
+     practice" count (questions attempted with sub-80% accuracy -- the same
+     "not solid yet" bar the chapter/domain bars use elsewhere). */
+  function renderDashboard() {
+    const perf = loadPerf();
+    const entries = Object.entries(perf);
+    document.getElementById('dashStreak').textContent = computeDayStreak();
+    document.getElementById('dashPracticed').textContent = entries.length + '/' + BANK.length;
+
+    const needsPractice = entries.filter(([, p]) => p.attempts > 0 && (p.correct / p.attempts) < 0.8).length;
+    document.getElementById('dashNeedsPractice').textContent = needsPractice;
+    document.getElementById('dashNeedsPracticeTile').classList.toggle('dash-clear', needsPractice === 0);
+  }
+
   function buildStats() {
     const perf = loadPerf();
     const entries = Object.values(perf);
@@ -498,5 +514,5 @@ const Quiz = (() => {
     }
   }
 
-  return { init, currentPool, buildChapterList, refreshCountUI, buildStats };
+  return { init, currentPool, buildChapterList, refreshCountUI, buildStats, renderDashboard };
 })();

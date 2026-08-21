@@ -43,6 +43,15 @@ h1{font-size:26px;margin:0 0 6px;color:var(--text);letter-spacing:-.01em;}
 .sub{color:var(--text-dim);font-size:14px;margin-bottom:20px;line-height:1.5;}
 .sub b{color:var(--amber);font-weight:600;}
 
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.dash-tile{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px 10px;text-align:center;}
+.dash-n{font-size:26px;font-weight:800;color:var(--amber);line-height:1;}
+.dash-l{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:6px;}
+.dash-tile-warn{cursor:pointer;}
+.dash-tile-warn:hover{border-color:var(--amber-dim);}
+.dash-tile-warn .dash-n{color:var(--red);}
+.dash-tile-warn.dash-clear .dash-n{color:var(--green);}
+
 .quick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
 .quick-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:12px 8px;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;}
 .quick-btn:hover{border-color:var(--amber);}

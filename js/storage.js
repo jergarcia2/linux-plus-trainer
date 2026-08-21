@@ -33,6 +33,30 @@ function recordAnswer(idx, correct) {
 }
 function getQPerf(idx) { return loadPerf()['q' + idx] || null; }
 
+/* Day streak: derived from the lastDate/last fields already stored per question/
+   scenario, rather than a separate counter -- consecutive calendar days (up to and
+   including today, or yesterday if you haven't studied yet today) with at least
+   one recorded answer. */
+function activeDaySet() {
+  const days = new Set();
+  Object.values(loadPerf()).forEach(p => p.lastDate && days.add(p.lastDate));
+  Object.values(loadPbqStats()).forEach(p => p.last && days.add(p.last));
+  return days;
+}
+function computeDayStreak() {
+  const days = activeDaySet();
+  if (!days.size) return 0;
+  const fmt = d => d.toISOString().slice(0, 10);
+  const cursor = new Date();
+  if (!days.has(fmt(cursor))) cursor.setDate(cursor.getDate() - 1);
+  let streak = 0;
+  while (days.has(fmt(cursor))) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
 function loadPbqStats() {
   try { return JSON.parse(localStorage.getItem(PBQ_KEY) || '{}'); } catch (e) { return {}; }
 }
