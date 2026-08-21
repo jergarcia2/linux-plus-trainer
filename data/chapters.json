@@ -1,0 +1,36 @@
+{
+ "chapters": [
+  "Module 1: Identifying Basic Linux Concepts",
+  "Module 2: Administering Users and Groups",
+  "Module 3: Configuring Permissions",
+  "Module 4: Implementing File Management",
+  "Module 5: Authoring Text Files",
+  "Module 6: Deploying Software",
+  "Module 7: Administering Storage",
+  "Module 8: Managing the Linux Kernel and Devices",
+  "Module 9: Maintaining Services",
+  "Module 10: Configuring Network Settings",
+  "Module 11: Securing a Linux System",
+  "Module 12: Installing Linux",
+  "Module 13: Scripting with Bash and Python",
+  "Module 14: Managing Containers in Linux",
+  "Module 15: Automating Infrastructure Management"
+ ],
+ "counts": {
+  "Module 1: Identifying Basic Linux Concepts": 1,
+  "Module 2: Administering Users and Groups": 15,
+  "Module 3: Configuring Permissions": 11,
+  "Module 4: Implementing File Management": 12,
+  "Module 5: Authoring Text Files": 4,
+  "Module 6: Deploying Software": 9,
+  "Module 7: Administering Storage": 8,
+  "Module 8: Managing the Linux Kernel and Devices": 17,
+  "Module 9: Maintaining Services": 10,
+  "Module 10: Configuring Network Settings": 37,
+  "Module 11: Securing a Linux System": 16,
+  "Module 12: Installing Linux": 3,
+  "Module 13: Scripting with Bash and Python": 25,
+  "Module 14: Managing Containers in Linux": 7,
+  "Module 15: Automating Infrastructure Management": 10
+ }
+}

@@ -1,0 +1,88 @@
+[
+ {
+  "title": "Performance Based Question 1",
+  "parts": [
+   {
+    "q_idx": 3,
+    "a_idx": 4,
+    "qImg": "images/pbq-legacy-0-0-qImg.png",
+    "aImg": "images/pbq-legacy-0-0-aImg.png",
+    "answerText": "parted -s /dev/sdc mklabel gpt\nparted -s /dev/sdc mkpart primary ext4 1 10G\nmkfs.ext4 /dev/sdc1\n\n(Selections: mklabel → gpt; mkpart → primary/ext4//dev/sdc; mkfs → ext4 on /dev/sdc1)"
+   }
+  ]
+ },
+ {
+  "title": "Performance Based Question 2",
+  "parts": [
+   {
+    "q_idx": 6,
+    "a_idx": 7,
+    "qImg": "images/pbq-legacy-1-0-qImg.png",
+    "aImg": "images/pbq-legacy-1-0-aImg.png",
+    "answerText": "vgcfgrestore vg01 -f /etc/lvm/archive/vg01_00002-966141411.vg\n\nRestores the VG metadata from the LVM archive after it was lost."
+   },
+   {
+    "q_idx": 8,
+    "a_idx": 9,
+    "qImg": "images/pbq-legacy-1-1-qImg.png",
+    "aImg": "images/pbq-legacy-1-1-aImg.png",
+    "answerText": "lvchange -a y /dev/vg01/lv01\n\nReactivates the logical volume now that the VG metadata has been restored."
+   },
+   {
+    "q_idx": 10,
+    "a_idx": 11,
+    "qImg": "images/pbq-legacy-1-2-qImg.png",
+    "aImg": "images/pbq-legacy-1-2-aImg.png",
+    "answerText": "mount -a\n\nUpdated answer: 'mount /important_data /dev/vg01/lv01' is crossed out as incorrect in the updated deck. The correct command is 'mount -a', which mounts everything listed in /etc/fstab."
+   }
+  ]
+ },
+ {
+  "title": "Performance Based Question 3",
+  "parts": [
+   {
+    "q_idx": 13,
+    "a_idx": 14,
+    "qImg": "images/pbq-legacy-2-0-qImg.png",
+    "aImg": "images/pbq-legacy-2-0-aImg.png",
+    "answerText": "Backup:\ntar -cvf /backups/application.tar -C /opt/ application\n\nRestore:\ntar -xvf /backups/application.tar -C /opt/\n\n-cvf creates a verbose archive; -C /opt/ saves only the relative application directory avoiding absolute paths. -xvf extracts back to /opt/."
+   }
+  ]
+ },
+ {
+  "title": "Performance Based Question 4",
+  "parts": [
+   {
+    "q_idx": 16,
+    "a_idx": 17,
+    "qImg": "images/pbq-legacy-3-0-qImg.png",
+    "aImg": "images/pbq-legacy-3-0-aImg.png",
+    "answerText": "Archive tab:\ntar -cvf /tmp/ann.tar -C /home ann\n\nExtract tab:\ntar -xvf /tmp/ann.tar -C /home/joe"
+   }
+  ]
+ },
+ {
+  "title": "Performance Based Question 1 OLDER",
+  "parts": [
+   {
+    "q_idx": 19,
+    "a_idx": 20,
+    "qImg": "images/pbq-legacy-4-0-qImg.png",
+    "aImg": "images/pbq-legacy-4-0-aImg.png",
+    "answerText": "find /var/log -type f -maxdepth 1 | grep \"log.[1-6]$\" > /tmp/tempfile\nfor filename in $(cat /tmp/tempfile)\ndo\n  gzip $filename\ndone"
+   }
+  ]
+ },
+ {
+  "title": "Performance Based Question 2 OLDER",
+  "parts": [
+   {
+    "q_idx": 22,
+    "a_idx": 23,
+    "qImg": "images/pbq-legacy-5-0-qImg.png",
+    "aImg": "images/pbq-legacy-5-0-aImg.png",
+    "answerText": "yum install httpd\nsystemctl start httpd\nsystemctl enable httpd\nsystemctl status httpd"
+   }
+  ]
+ }
+]

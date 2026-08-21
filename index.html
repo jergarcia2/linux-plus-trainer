@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070d18">
+<meta name="description" content="Linux+ XK0-006 Certification Trainer — adaptive quiz bank and interactive performance-based questions.">
+<title>Linux+ XK0-006 Trainer</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23070d18%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22 fill=%22%23ffb000%22 font-family=%22monospace%22>&gt;_</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23070d18%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22 fill=%22%23ffb000%22 font-family=%22monospace%22>&gt;_</text></svg>">
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">xk0-006 <span>// linux+ trainer</span></div>
+  <div class="top-actions">
+    <button class="tbtn" id="themeBtn">☀️ Light</button>
+    <button class="tbtn" id="statsBtn">My Stats</button>
+    <button class="tbtn" id="installBtn" class="hidden">Install</button>
+  </div>
+</div>
+
+<div class="appwrap" id="appWrap">
+
+  <!-- ===================== SETUP SCREEN ===================== -->
+  <section id="setupScreen" class="screen">
+    <div class="mode-tabs">
+      <div class="mode-tab active" id="tabMC">Multiple Choice</div>
+      <div class="mode-tab" id="tabPBQ">Performance-Based</div>
+    </div>
+
+    <div id="mcSetup">
+      <h1>Linux+ Practice Quiz</h1>
+      <div class="sub">Every answer shows a <b>full per-option breakdown</b> with flag explanations, acronym expansions, and why each choice is right or wrong &mdash; plus a quick exam tip. Your answers are tracked so quizzes focus on your weak spots.</div>
+
+      <div class="quick-row" id="quickRow">
+        <button class="quick-btn" id="quickTenBtn">⚡ Quick 10</button>
+        <button class="quick-btn" id="favBtn">⭐ Study Favorites <span id="favCount">0</span></button>
+        <button class="quick-btn" id="crambtn">🔥 Last-Hour Cram</button>
+        <button class="quick-btn" id="readinessBtn">📊 Readiness</button>
+      </div>
+
+      <div class="adaptive-row" id="adaptiveToggle">
+        <div class="adaptive-toggle"></div>
+        <div class="adaptive-label"><strong>Adaptive Mode — Focus on Deficiencies</strong><span id="adaptiveDesc">Questions you've missed more often (and questions you haven't seen yet) appear more frequently.</span></div>
+      </div>
+
+      <div class="filter-grid">
+        <div>
+          <span class="field-label">Chapters <span class="hint" id="chapterToggle">select all / none</span></span>
+          <div class="chapter-list" id="chapterList"></div>
+        </div>
+        <div class="filter-col">
+          <label class="field-label">Domain
+            <select id="domainSelect" class="select"><option value="all">All domains</option></select>
+          </label>
+          <label class="field-label">Difficulty
+            <select id="difficultySelect" class="select">
+              <option value="all">All levels</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </label>
+          <label class="check-row"><input type="checkbox" id="favOnlyCheck"><span>Favorites only</span></label>
+        </div>
+      </div>
+
+      <span class="field-label">Number of questions</span>
+      <div class="count-grid" id="countGrid"></div>
+
+      <span class="field-label">Answer feedback</span>
+      <div class="feedback-tabs" id="feedbackTabs">
+        <div class="feedback-tab active" data-mode="checkasyougo">Check as you go<span>Submit each answer, see the breakdown, then move on.</span></div>
+        <div class="feedback-tab" data-mode="autoreveal">Auto-reveal<span>Breakdown appears the instant you pick an option.</span></div>
+        <div class="feedback-tab" data-mode="hidetilend">Hide until end<span>No feedback per question — everything is graded together at the end.</span></div>
+      </div>
+
+      <button class="start-btn" id="startBtn">Start Quiz</button>
+      <div class="bank-line"><b id="bankTotal"></b> questions in current selection (of <span id="bankAll"></span> total). Click any screenshot to enlarge.</div>
+    </div>
+
+    <div id="pbqSetup" class="hidden">
+      <h1>Performance-Based Questions</h1>
+      <div class="sub">Fully interactive PBQ scenarios &mdash; drag/click tokens, fill in dropdowns, or type real commands at a simulated terminal, then grade against the exam-style explanation. <b id="pbqCount">6 scenarios</b>.</div>
+      <div id="pbqStatsBox" class="pbq-stats-box"></div>
+      <button class="start-btn" id="pbqStartBtn">Start Interactive PBQs</button>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ SCREEN (sidebar + question) ===================== -->
+  <section id="quizScreen" class="screen hidden quiz-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-block">
+        <div class="sb-label">Progress</div>
+        <div class="sb-row"><span id="sbAnswered">0</span> / <span id="sbTotal">0</span> answered</div>
+        <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+      </div>
+      <div class="sb-stat-grid">
+        <div class="sb-stat"><div class="sb-stat-n" id="sbScore">0</div><div class="sb-stat-l">Score</div></div>
+        <div class="sb-stat"><div class="sb-stat-n" id="sbAccuracy">—</div><div class="sb-stat-l">Checked accuracy</div></div>
+      </div>
+      <div class="sb-block">
+        <div class="sb-label">Jump to question</div>
+        <div class="sb-jump-grid" id="sbJumpGrid"></div>
+      </div>
+      <button class="btn" id="sidebarFavToggle">☆ Save to Favorites</button>
+      <button class="btn" id="gradeExamBtn">Grade Exam</button>
+      <button class="btn danger" id="exitExamBtn">Exit Exam</button>
+    </aside>
+
+    <div class="quiz-main">
+      <div class="meta-row" id="metaRow">
+        <span class="chip" id="qChapter"></span>
+        <span class="chip chip-domain" id="qDomain"></span>
+        <span class="chip chip-diff" id="qDifficulty"></span>
+        <span id="perfChip"></span>
+      </div>
+      <div class="qtext" id="qText"></div>
+      <div id="imgNote" class="img-note hidden"><span class="ico">▲</span><span>This question originally referenced a screenshot not captured in the source text.</span></div>
+      <div id="qShotBox"></div>
+      <div id="multiHint" class="multi-hint hidden">Select all that apply, then submit</div>
+      <div id="optsBox"></div>
+      <div class="breakdown hidden" id="breakdown">
+        <div class="breakdown-header">Answer Breakdown — flags, acronyms, and why each option is right or wrong</div>
+        <div id="examTipBox" class="exam-tip hidden"></div>
+        <div id="breakdownRows"></div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="prevBtn">← Previous</button>
+        <button class="btn" id="clearBtn">Clear</button>
+        <button class="btn primary" id="submitBtn">Submit Answer</button>
+        <button class="btn primary hidden" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section id="resultsScreen" class="screen hidden">
+    <div class="score-hero"><div class="score-num" id="finalPct"></div><div class="score-label" id="finalLabel"></div></div>
+    <div class="score-bar-track"><div class="score-bar-fill" id="finalBar"></div></div>
+    <div id="sessionInsight" class="session-insight"></div>
+    <div class="section-label">Full Review — with answer breakdowns</div>
+    <div id="reviewBox"></div>
+    <div class="controls">
+      <button class="btn" id="statsFromResultsBtn">View Stats</button>
+      <button class="btn primary" id="retryBtn">Start New Quiz</button>
+    </div>
+  </section>
+
+  <!-- ===================== STATS ===================== -->
+  <section id="statsScreen" class="screen hidden">
+    <h1 class="screen-h1">My Performance Stats</h1>
+    <div class="snote"><b>Stats persist in your browser's localStorage.</b> Use Export to save a backup. Import to restore on another device or after clearing browser data.</div>
+    <div class="stat-grid" id="statCards"></div>
+    <div class="section-label">By Chapter — sorted weakest first</div>
+    <div id="chapterStats"></div>
+    <div class="section-label">By Domain</div>
+    <div id="domainStats"></div>
+    <div class="controls">
+      <button class="btn danger" id="clearStatsBtn">Clear Stats</button>
+      <label class="import-lbl" for="importFile">Import</label>
+      <input type="file" id="importFile" accept=".json" class="hidden">
+      <button class="btn" id="exportStatsBtn">Export</button>
+      <button class="btn primary" id="statsBackBtn">Back</button>
+    </div>
+  </section>
+
+  <!-- ===================== READINESS ===================== -->
+  <section id="readinessScreen" class="screen hidden">
+    <div class="screen-header-row"><h1 class="screen-h1">Exam Readiness</h1><button class="btn" id="readinessBackBtn">Close</button></div>
+    <div id="readinessHero" class="readiness-hero"></div>
+    <div class="section-label">Module mastery</div>
+    <div id="readinessModules"></div>
+    <div class="section-label">Domain mastery</div>
+    <div id="readinessDomains"></div>
+    <div id="readinessNextStep" class="next-step-box"></div>
+  </section>
+
+  <!-- ===================== PBQ ===================== -->
+  <section id="pbqScreen" class="screen hidden pbq-wide">
+    <div class="progress-row"><span>SCENARIO <b id="pbqNum"></b> / <span id="pbqTotal"></span></span><span id="pbqBadge" class="chip"></span></div>
+    <div class="bar-track"><div class="bar-fill" id="pbqBarFill"></div></div>
+    <div class="pbq-title" id="pbqTitle"></div>
+    <div class="pbq-sub" id="pbqDesc"></div>
+    <div id="pbqBody"></div>
+    <div id="pbqFeedback" class="fb hidden"></div>
+    <div class="controls">
+      <button class="btn" id="pbqStatsToggleBtn">Scenario Stats</button>
+      <button class="btn primary" id="pbqCheckBtn">Check Answer</button>
+      <button class="btn primary hidden" id="pbqNextBtn">Next →</button>
+    </div>
+  </section>
+
+  <section id="pbqDoneScreen" class="screen hidden">
+    <div class="score-hero"><div class="score-num" style="font-size:32px;">All scenarios reviewed</div><div class="score-label">Performance-based practice complete</div></div>
+    <div class="controls"><button class="btn primary" id="pbqRetryBtn">Restart PBQs</button></div>
+  </section>
+
+</div>
+
+<div class="lightbox hidden" id="lightbox"><img id="lightboxImg"><div class="lightbox-hint">Click anywhere to close</div></div>
+
+<script src="js/storage.js"></script>
+<script src="js/adaptive.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/pbq.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
