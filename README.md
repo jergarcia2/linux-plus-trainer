@@ -3,7 +3,8 @@
 A merged rebuild of the original `linux-plus-quiz_3.html` / `linux-plus-pbq-interactive_1.html`
 single-file apps: your original quiz engine, per-option answer breakdowns, and adaptive
 weighting, combined with a left sidebar, dark/light theme, an objective/difficulty filter, a
-readiness dashboard, last-hour cram mode, and offline install — pulled from the
+readiness dashboard, last-hour cram mode, a setup-screen tracking strip (day streak / questions
+practiced / needs practice), and offline install — pulled from the
 [reference site](https://jasonpinca2-hub.github.io/Linux_Plus_Mobile/) — while keeping the
 old "how confident are you" prompt (and its favorites feature) out, and adding a 3-way
 answer-feedback toggle (check as you go / auto-reveal / hide until end) that neither original
@@ -69,9 +70,9 @@ matching, `scripts/match_images.py` + `scripts/extract_vce_images.py` for images
 - `domain` (the 5 official CompTIA domains) is mapped per-module, and `difficulty` is a
   length-based heuristic — both are best-effort editorial tags, not certified ratings. Hand-correct
   in `data/bank.json` as needed.
-- `examTip` is only populated for the 1 newly-added question — authoring real, non-generic tips for
-  the original 185 is still open (see chat for why: the reference site's version of this content
-  is templated boilerplate, not worth copying verbatim).
-- The remaining ~40 image candidates and the 9 unresolved VCE multi-select questions could be
+- `examTip` is now populated for all 186 questions — concise, question-specific test-taking tips
+  authored from each question's actual distinguishing concept (not copied from the reference site,
+  whose version of this content is templated boilerplate).
+- The remaining ~19 rejected image candidates and the 9 unresolved VCE multi-select questions could be
   revisited by hand using `scripts/pdftext/vce_images/` and `scripts/pdftext/vce_parsed.json` (both
   gitignored scratch output — re-run `scripts/parse_vce.py` etc. to regenerate).
