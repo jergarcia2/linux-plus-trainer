@@ -836,7 +836,7 @@
   "q": "Which of the following is a reason multiple password changes on the same day are not allowed?",
   "options": {
    "A": "To avoid brute-forced password attacks by making them too long to perform",
-   "B": "To increase password complexity and the systemâ€™s security",
+   "B": "To increase password complexity and the system’s security",
    "C": "To stop users from circulating through the password history to return to the originally used password",
    "D": "To enforce using multifactor authentication with stronger encryption algorithms instead of passwords"
   },
@@ -1493,7 +1493,7 @@
   "domain": "4.0 Automation, Orchestration, and Scripting"
  },
  {
-  "q": "A systems administrator needs to write a script that counts the number of times â€œFAILâ€ appears in a log file. If â€œFAILâ€ appears zero times, then the administrator would like to print the message \"SUCCESS\" Given the following: Which of the following should be used before the zero to complete the script?",
+  "q": "A systems administrator needs to write a script that counts the number of times “FAIL” appears in a log file. If “FAIL” appears zero times, then the administrator would like to print the message \"SUCCESS\" Given the following: Which of the following should be used before the zero to complete the script?",
   "options": {
    "A": "-ne",
    "B": "-gt",
@@ -1577,7 +1577,7 @@
   "q": "While hardening a system, an administrator runs a port scan with Nmap, which returned the following output: Which of the following is the best way to address this security issue?",
   "options": {
    "A": "Configuring a firewall to block traffic on port 23 on the server",
-   "B": "Changing the systems administratorâ€™s password to prevent unauthorized access",
+   "B": "Changing the systems administrator’s password to prevent unauthorized access",
    "C": "Closing port 80 on the network switch to block traffic",
    "D": "Disabling and removing the Telnet service on the server"
   },
@@ -1682,7 +1682,7 @@
   "domain": "1.0 System Management"
  },
  {
-  "q": "Customers are unable to send emails to a companyâ€™s domain When searching the naming service, they receive the following error message: Which of the following is a valid reason for this error?",
+  "q": "Customers are unable to send emails to a company’s domain When searching the naming service, they receive the following error message: Which of the following is a valid reason for this error?",
   "options": {
    "A": "The root name servers were configured improperly.",
    "B": "The queried DNS server is not responding.",

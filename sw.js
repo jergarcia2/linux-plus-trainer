@@ -3,7 +3,7 @@
    full quiz run works offline after you've opened it online once. Bump
    CACHE_NAME whenever shell files change to force a refresh. */
 
-const CACHE_NAME = 'linuxplus-examprep-v2';
+const CACHE_NAME = 'linuxplus-examprep-v3';
 const SHELL = [
   './',
   './index.html',
