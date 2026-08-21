@@ -9,7 +9,7 @@
      viewed they're available offline and never re-fetched needlessly.
    Bump CACHE_NAME whenever you want to force a clean slate for everyone. */
 
-const CACHE_NAME = 'linuxplus-examprep-v4';
+const CACHE_NAME = 'linuxplus-examprep-v5';
 const SHELL = [
   './',
   './index.html',
@@ -32,7 +32,11 @@ function isImageRequest(url) {
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(SHELL.map(url =>
+        fetch(url, { cache: 'no-store' }).then(res => cache.put(url, res))
+      ))
+    ).then(() => self.skipWaiting())
   );
 });
 
@@ -62,9 +66,13 @@ self.addEventListener('fetch', event => {
   }
 
   // network-first for everything else (the app shell + data): always try
-  // to get the current version when online, cache it for offline fallback
+  // to get the current version when online, cache it for offline fallback.
+  // cache: 'no-store' bypasses the browser's own HTTP cache too, not just
+  // this service worker's cache -- otherwise a Cache-Control header from
+  // the host can still serve a stale response even though we're on the
+  // "network-first" path.
   event.respondWith(
-    fetch(req).then(res => {
+    fetch(req, { cache: 'no-store' }).then(res => {
       if (res && res.status === 200 && res.type === 'basic') {
         const copy = res.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
