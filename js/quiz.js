@@ -253,8 +253,17 @@ const Quiz = (() => {
     (q.images || []).forEach(src => {
       const div = document.createElement('div');
       div.className = 'qshot';
-      div.innerHTML = `<img src="${src}" alt="question screenshot">`;
-      div.addEventListener('click', () => openLightbox(src));
+      const img = document.createElement('img');
+      img.alt = 'question screenshot';
+      img.loading = 'lazy';
+      img.addEventListener('error', () => {
+        div.classList.add('qshot-error');
+        div.innerHTML = '<span>Image failed to load — tap to retry</span>';
+        div.onclick = () => { div.classList.remove('qshot-error'); renderQuestion(); };
+      }, { once: true });
+      img.addEventListener('click', () => { if (!div.classList.contains('qshot-error')) openLightbox(src); });
+      img.src = src;
+      div.appendChild(img);
       shotBox.appendChild(div);
     });
 

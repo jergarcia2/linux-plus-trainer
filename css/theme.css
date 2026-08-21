@@ -123,6 +123,8 @@ h1{font-size:26px;margin:0 0 6px;color:var(--text);letter-spacing:-.01em;}
 .img-note .ico{color:var(--amber);font-family:var(--mono);font-weight:700;}
 .qshot{position:relative;margin-bottom:16px;border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:zoom-in;}
 .qshot img{display:block;width:100%;height:auto;}
+.qshot.qshot-error{cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:80px;padding:20px;background:var(--panel-2);}
+.qshot.qshot-error span{color:var(--text-dim);font-size:13px;text-align:center;}
 .multi-hint{color:var(--amber);font-size:12.5px;margin-bottom:10px;font-family:var(--mono);}
 
 .opt{display:flex;gap:10px;align-items:flex-start;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px;margin-bottom:9px;cursor:pointer;font-size:14px;line-height:1.4;}

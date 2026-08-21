@@ -1,0 +1,10 @@
+# Force these as binary so Windows' core.autocrlf (line-ending conversion)
+# never touches them -- a text-mode conversion pass over binary bytes can
+# silently corrupt images.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
