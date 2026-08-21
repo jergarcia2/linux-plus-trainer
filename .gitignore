@@ -2,3 +2,6 @@ node_modules/
 *.pyc
 __pycache__/
 .DS_Store
+
+# intermediate PDF-extraction scratch output (large, regenerable via the scripts that made them)
+scripts/pdftext/
