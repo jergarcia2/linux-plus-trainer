@@ -250,7 +250,8 @@ const Quiz = (() => {
     imgNote.classList.toggle('hidden', !(q.hasImage && (!q.images || q.images.length === 0)));
     const shotBox = document.getElementById('qShotBox');
     shotBox.innerHTML = '';
-    (q.images || []).forEach(src => {
+    (q.images || []).forEach(rel => {
+      const src = 'data/' + rel; // paths in bank.json are stored relative to data/
       const div = document.createElement('div');
       div.className = 'qshot';
       const img = document.createElement('img');
