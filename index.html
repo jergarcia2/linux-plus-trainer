@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070d18">
-<meta name="description" content="Linux+ XK0-006 Certification Trainer — adaptive quiz bank and interactive performance-based questions.">
-<title>Linux+ XK0-006 Trainer</title>
+<meta name="description" content="Linux+ XK0-006 Exam Prep — adaptive quiz bank and interactive performance-based questions.">
+<title>Linux+ XK0-006 Exam Prep</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23070d18%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22 fill=%22%23ffb000%22 font-family=%22monospace%22>&gt;_</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23070d18%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22 fill=%22%23ffb000%22 font-family=%22monospace%22>&gt;_</text></svg>">
@@ -14,9 +14,9 @@
 <body>
 
 <div class="topbar">
-  <div class="brand">xk0-006 <span>// linux+ trainer</span></div>
+  <div class="brand">xk0-006 <span>// linux+ exam prep</span></div>
   <div class="top-actions">
-    <button class="tbtn" id="themeBtn">☀️ Light</button>
+    <button class="tbtn" id="themeBtn">Light</button>
     <button class="tbtn" id="statsBtn">My Stats</button>
     <button class="tbtn" id="installBtn" class="hidden">Install</button>
   </div>
@@ -36,10 +36,9 @@
       <div class="sub">Every answer shows a <b>full per-option breakdown</b> with flag explanations, acronym expansions, and why each choice is right or wrong &mdash; plus a quick exam tip. Your answers are tracked so quizzes focus on your weak spots.</div>
 
       <div class="quick-row" id="quickRow">
-        <button class="quick-btn" id="quickTenBtn">⚡ Quick 10</button>
-        <button class="quick-btn" id="favBtn">⭐ Study Favorites <span id="favCount">0</span></button>
-        <button class="quick-btn" id="crambtn">🔥 Last-Hour Cram</button>
-        <button class="quick-btn" id="readinessBtn">📊 Readiness</button>
+        <button class="quick-btn" id="quickTenBtn">Quick 10</button>
+        <button class="quick-btn" id="crambtn">Last-Hour Cram</button>
+        <button class="quick-btn" id="readinessBtn">Readiness</button>
       </div>
 
       <div class="adaptive-row" id="adaptiveToggle">
@@ -64,7 +63,6 @@
               <option value="Hard">Hard</option>
             </select>
           </label>
-          <label class="check-row"><input type="checkbox" id="favOnlyCheck"><span>Favorites only</span></label>
         </div>
       </div>
 
@@ -106,7 +104,6 @@
         <div class="sb-label">Jump to question</div>
         <div class="sb-jump-grid" id="sbJumpGrid"></div>
       </div>
-      <button class="btn" id="sidebarFavToggle">☆ Save to Favorites</button>
       <button class="btn" id="gradeExamBtn">Grade Exam</button>
       <button class="btn danger" id="exitExamBtn">Exit Exam</button>
     </aside>
@@ -119,7 +116,7 @@
         <span id="perfChip"></span>
       </div>
       <div class="qtext" id="qText"></div>
-      <div id="imgNote" class="img-note hidden"><span class="ico">▲</span><span>This question originally referenced a screenshot not captured in the source text.</span></div>
+      <div id="imgNote" class="img-note hidden"><span class="ico">[!]</span><span>This question originally referenced a screenshot not captured in the source text.</span></div>
       <div id="qShotBox"></div>
       <div id="multiHint" class="multi-hint hidden">Select all that apply, then submit</div>
       <div id="optsBox"></div>

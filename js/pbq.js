@@ -308,7 +308,7 @@ const PBQ = (() => {
     recordPbqResult(s.id, ok);
     const fb = document.getElementById('pbqFeedback');
     fb.className = 'fb ' + (ok ? 'ok' : 'ng');
-    fb.textContent = (ok ? '✅ Correct.\n\n' : '❌ Not quite — review the explanation below.\n\n') + (s.expl || '');
+    fb.textContent = (ok ? '✓ Correct.\n\n' : '✗ Not quite — review the explanation below.\n\n') + (s.expl || '');
     fb.classList.remove('hidden');
     document.getElementById('pbqCheckBtn').classList.add('hidden');
     document.getElementById('pbqNextBtn').classList.remove('hidden');

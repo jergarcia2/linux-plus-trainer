@@ -1,13 +1,13 @@
 /* ============================================================
    quiz.js — multiple-choice quiz: setup, sidebar, question flow,
-   the 3-way answer-feedback mode, favorites, results, stats,
-   readiness dashboard and last-hour cram.
+   the 3-way answer-feedback mode, results, stats, readiness
+   dashboard and last-hour cram.
    ============================================================ */
 
 const Quiz = (() => {
   let BANK = [], CHAPTERS = [], CHAPTER_COUNTS = {}, DOMAINS = {};
   let selectedChapters = new Set();
-  let selectedDomain = 'all', selectedDifficulty = 'all', favOnly = false;
+  let selectedDomain = 'all', selectedDifficulty = 'all';
   let chosenCount = null, adaptiveMode = true, feedbackMode = 'checkasyougo';
   let session = null;
 
@@ -22,7 +22,6 @@ const Quiz = (() => {
     buildChapterList();
     buildDomainSelect();
     refreshCountUI();
-    updateFavCount();
 
     document.getElementById('adaptiveToggle').addEventListener('click', () => {
       adaptiveMode = !adaptiveMode;
@@ -45,7 +44,6 @@ const Quiz = (() => {
 
     document.getElementById('domainSelect').addEventListener('change', e => { selectedDomain = e.target.value; refreshCountUI(); });
     document.getElementById('difficultySelect').addEventListener('change', e => { selectedDifficulty = e.target.value; refreshCountUI(); });
-    document.getElementById('favOnlyCheck').addEventListener('change', e => { favOnly = e.target.checked; refreshCountUI(); });
 
     document.querySelectorAll('.feedback-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -59,14 +57,8 @@ const Quiz = (() => {
 
     document.getElementById('startBtn').addEventListener('click', () => { if (chosenCount) startQuiz(currentPool(), chosenCount); });
     document.getElementById('quickTenBtn').addEventListener('click', () => { adaptiveMode = true; startQuiz(BANK, 10); });
-    document.getElementById('favBtn').addEventListener('click', () => {
-      const favs = loadFavs();
-      const pool = BANK.filter(q => favs.has(q._idx));
-      if (!pool.length) { alert('No favorites yet — star a question during a quiz to add one.'); return; }
-      startQuiz(pool, pool.length);
-    });
     document.getElementById('crambtn').addEventListener('click', () => {
-      const pool = buildCramPool(BANK, loadPerf(), loadFavs()).slice(0, 25);
+      const pool = buildCramPool(BANK, loadPerf()).slice(0, 25);
       if (!pool.length) { alert('Nothing to cram yet — answer a few questions first.'); return; }
       adaptiveMode = true;
       startQuiz(pool, pool.length, true);
@@ -81,13 +73,6 @@ const Quiz = (() => {
     document.getElementById('clearBtn').addEventListener('click', () => { session.selections[session.idx] = new Set(); renderQuestion(); });
     document.getElementById('gradeExamBtn').addEventListener('click', finishQuiz);
     document.getElementById('exitExamBtn').addEventListener('click', () => { showScreen('setupScreen'); });
-    document.getElementById('sidebarFavToggle').addEventListener('click', () => {
-      const q = session.questions[session.idx];
-      toggleFav(q._idx);
-      updateFavCount();
-      renderQuestion();
-      renderSidebar();
-    });
 
     // results
     document.getElementById('retryBtn').addEventListener('click', () => showScreen('setupScreen'));
@@ -105,7 +90,7 @@ const Quiz = (() => {
     document.getElementById('exportStatsBtn').addEventListener('click', exportStats);
     document.getElementById('importFile').addEventListener('change', e => {
       const f = e.target.files[0];
-      if (f) importStatsFile(f, () => { buildChapterList(); refreshCountUI(); buildStats(); updateFavCount(); });
+      if (f) importStatsFile(f, () => { buildChapterList(); refreshCountUI(); buildStats(); });
     });
 
     // lightbox
@@ -122,7 +107,6 @@ const Quiz = (() => {
       if (!selectedChapters.has(q.chapter)) return false;
       if (selectedDomain !== 'all' && q.domain !== selectedDomain) return false;
       if (selectedDifficulty !== 'all' && q.difficulty !== selectedDifficulty) return false;
-      if (favOnly && !loadFavs().has(q._idx)) return false;
       return true;
     });
   }
@@ -183,10 +167,6 @@ const Quiz = (() => {
     });
   }
 
-  function updateFavCount() {
-    document.getElementById('favCount').textContent = loadFavs().size;
-  }
-
   function startQuiz(pool, n, preOrdered) {
     const perf = loadPerf();
     const questions = preOrdered ? pool.slice(0, n) : weightedSample(pool, n, perf, adaptiveMode);
@@ -235,7 +215,6 @@ const Quiz = (() => {
     document.getElementById('sbScore').textContent = correctCount;
     document.getElementById('sbAccuracy').textContent = checkedIdx.length ? Math.round(correctCount / checkedIdx.length * 100) + '%' : '—';
 
-    const favs = loadFavs();
     const grid = document.getElementById('sbJumpGrid');
     grid.innerHTML = '';
     session.questions.forEach((q, i) => {
@@ -244,7 +223,6 @@ const Quiz = (() => {
       if (i === session.idx) b.classList.add('current');
       if (session.selections[i].size > 0) b.classList.add('done');
       if (session.checked[i]) b.classList.add(session.correct[i] ? 'correct' : 'wrong');
-      if (favs.has(q._idx)) b.classList.add('fav');
       b.addEventListener('click', () => jumpTo(i));
       grid.appendChild(b);
     });
@@ -265,11 +243,6 @@ const Quiz = (() => {
     document.getElementById('qDifficulty').textContent = q.difficulty || '';
     document.getElementById('perfChip').innerHTML = perfChipFor(q._idx);
     document.getElementById('qText').textContent = q.q;
-
-    const favs = loadFavs();
-    const favBtn = document.getElementById('sidebarFavToggle');
-    favBtn.textContent = favs.has(q._idx) ? '★ Favorited' : '☆ Save to Favorites';
-    favBtn.classList.toggle('primary', favs.has(q._idx));
 
     const imgNote = document.getElementById('imgNote');
     imgNote.classList.toggle('hidden', !(q.hasImage && (!q.images || q.images.length === 0)));
@@ -365,7 +338,7 @@ const Quiz = (() => {
       const picked = userSet.has(letter);
       const div = document.createElement('div');
       div.className = 'bd-row ' + (isCorrect ? 'is-correct' : (picked ? 'is-wrong' : 'is-neutral'));
-      const mark = isCorrect ? '✅' : (picked ? '❌' : '');
+      const mark = isCorrect ? '✓' : (picked ? '✗' : '');
       const reason = (q.optExpl && q.optExpl[letter]) || '';
       div.innerHTML = `<span class="bd-letter">${mark} ${letter}.</span><span>${escHtml(text)}</span><div class="bd-reason">${escHtml(reason)}</div>`;
       rows.appendChild(div);
@@ -405,7 +378,6 @@ const Quiz = (() => {
       ? `Weakest area this session: ${weakest[0]} (${Math.round(weakest[1] * 100)}%). Adaptive mode will surface more of these next time.`
       : '';
 
-    const favs = loadFavs();
     const box = document.getElementById('reviewBox');
     box.innerHTML = '';
     session.questions.forEach((q, i) => {
@@ -416,19 +388,12 @@ const Quiz = (() => {
       const optsHtml = Object.entries(q.options).map(([letter, text]) => {
         const isCorrect = correctSet.has(letter), picked = userSet.has(letter);
         const cls = isCorrect ? 'is-correct' : (picked ? 'is-wrong' : 'is-neutral');
-        const mark = isCorrect ? '✅' : (picked ? '❌' : '');
+        const mark = isCorrect ? '✓' : (picked ? '✗' : '');
         const reason = (q.optExpl && q.optExpl[letter]) || '';
         return `<div class="bd-row ${cls}"><span class="bd-letter">${mark} ${letter}.</span><span>${escHtml(text)}</span><div class="bd-reason">${escHtml(reason)}</div></div>`;
       }).join('');
       const tip = q.examTip ? `<div class="exam-tip"><b>Exam tip:</b> ${escHtml(q.examTip)}</div>` : '';
-      div.innerHTML = `<span class="rv-fav ${favs.has(q._idx) ? 'active' : ''}" data-idx="${q._idx}">${favs.has(q._idx) ? '★' : '☆'}</span>
-        <div class="rv-q">Q${i + 1}. ${escHtml(q.q)}</div>${optsHtml}${tip}`;
-      div.querySelector('.rv-fav').addEventListener('click', e => {
-        toggleFav(q._idx);
-        e.target.classList.toggle('active');
-        e.target.textContent = e.target.classList.contains('active') ? '★' : '☆';
-        updateFavCount();
-      });
+      div.innerHTML = `<div class="rv-q">Q${i + 1}. ${escHtml(q.q)}</div>${optsHtml}${tip}`;
       box.appendChild(div);
     });
 
@@ -444,8 +409,7 @@ const Quiz = (() => {
     document.getElementById('statCards').innerHTML = `
       <div class="stat-card"><div class="stat-n">${seen}/${BANK.length}</div><div class="stat-l">Questions seen</div></div>
       <div class="stat-card"><div class="stat-n">${totalAttempts}</div><div class="stat-l">Total attempts</div></div>
-      <div class="stat-card"><div class="stat-n">${totalAttempts ? Math.round(totalCorrect / totalAttempts * 100) : 0}%</div><div class="stat-l">Overall accuracy</div></div>
-      <div class="stat-card"><div class="stat-n">${loadFavs().size}</div><div class="stat-l">Favorites</div></div>`;
+      <div class="stat-card"><div class="stat-n">${totalAttempts ? Math.round(totalCorrect / totalAttempts * 100) : 0}%</div><div class="stat-l">Overall accuracy</div></div>`;
 
     const chBox = document.getElementById('chapterStats');
     chBox.innerHTML = '';
@@ -534,5 +498,5 @@ const Quiz = (() => {
     }
   }
 
-  return { init, currentPool, buildChapterList, refreshCountUI, buildStats, updateFavCount };
+  return { init, currentPool, buildChapterList, refreshCountUI, buildStats };
 })();

@@ -12,7 +12,6 @@ function escHtml(s) {
 
 const PERF_KEY = 'linuxplus_perf_v1';        // MC quiz per-question perf (unchanged shape)
 const PBQ_KEY = 'linuxplus_pbq_v1';          // interactive PBQ per-scenario perf (unchanged shape)
-const FAVS_KEY = 'linuxplus_favs_v1';        // NEW: favorited question indices
 const SETTINGS_KEY = 'linuxplus_settings_v1';// NEW: theme + answer-feedback mode etc.
 
 function loadPerf() {
@@ -50,19 +49,6 @@ function recordPbqResult(id, correct) {
   savePbqStats(s);
 }
 
-function loadFavs() {
-  try { return new Set(JSON.parse(localStorage.getItem(FAVS_KEY) || '[]')); } catch (e) { return new Set(); }
-}
-function saveFavs(set) {
-  try { localStorage.setItem(FAVS_KEY, JSON.stringify([...set])); } catch (e) {}
-}
-function toggleFav(idx) {
-  const favs = loadFavs();
-  if (favs.has(idx)) favs.delete(idx); else favs.add(idx);
-  saveFavs(favs);
-  return favs;
-}
-
 function loadSettings() {
   try { return Object.assign({ theme: 'dark', feedbackMode: 'checkasyougo' }, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); }
   catch (e) { return { theme: 'dark', feedbackMode: 'checkasyougo' }; }
@@ -78,7 +64,6 @@ function exportStats() {
     exported: new Date().toISOString(),
     data: loadPerf(),
     pbq: loadPbqStats(),
-    favs: [...loadFavs()],
   };
   const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -107,11 +92,6 @@ function importStatsFile(file, onDone) {
           if (!mergedPbq[k] || v.attempts > mergedPbq[k].attempts) mergedPbq[k] = v;
         }
         savePbqStats(mergedPbq);
-      }
-      if (obj.favs) {
-        const favs = loadFavs();
-        obj.favs.forEach(i => favs.add(i));
-        saveFavs(favs);
       }
       if (onDone) onDone(true);
     } catch (e) {

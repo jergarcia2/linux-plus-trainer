@@ -13,10 +13,10 @@ function showScreen(id) {
 function applyTheme(theme) {
   if (theme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
-    document.getElementById('themeBtn').textContent = '🌙 Dark';
+    document.getElementById('themeBtn').textContent = 'Dark';
   } else {
     document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById('themeBtn').textContent = '☀️ Light';
+    document.getElementById('themeBtn').textContent = 'Light';
   }
 }
 

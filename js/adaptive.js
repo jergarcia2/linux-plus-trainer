@@ -44,9 +44,9 @@ function weightedSample(pool, n, perf, adaptive) {
 }
 
 /* Preset used by "Last-Hour Cram": a small pool, heavily adaptive-weighted
-   toward weak modules/domains and favorites, skipping questions you've
-   already nailed with a streak. */
-function buildCramPool(bank, perf, favs) {
+   toward weak modules/domains, skipping questions you've already nailed
+   with a streak. */
+function buildCramPool(bank, perf) {
   const weak = new Set();
   const chapterAcc = {};
   bank.forEach(q => {
@@ -63,10 +63,9 @@ function buildCramPool(bank, perf, favs) {
   return bank.filter(q => {
     const p = perf['q' + q._idx];
     const mastered = p && p.attempts >= 2 && p.streak >= 2;
-    if (mastered && !favs.has(q._idx)) return false;
-    return true;
+    return !mastered;
   }).sort((a, b) => {
-    const score = q => (weak.has(q.chapter) ? 2 : 0) + (favs.has(q._idx) ? 1 : 0) + calcWeight(q._idx, perf);
+    const score = q => (weak.has(q.chapter) ? 2 : 0) + calcWeight(q._idx, perf);
     return score(b) - score(a);
   });
 }

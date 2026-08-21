@@ -1,12 +1,13 @@
-# Linux+ XK0-006 Trainer
+# Linux+ XK0-006 Exam Prep
 
 A merged rebuild of the original `linux-plus-quiz_3.html` / `linux-plus-pbq-interactive_1.html`
 single-file apps: your original quiz engine, per-option answer breakdowns, and adaptive
-weighting, combined with a left sidebar, favorites, dark/light theme, an objective/difficulty
-filter, a readiness dashboard, last-hour cram mode, and offline install — pulled from the
+weighting, combined with a left sidebar, dark/light theme, an objective/difficulty filter, a
+readiness dashboard, last-hour cram mode, and offline install — pulled from the
 [reference site](https://jasonpinca2-hub.github.io/Linux_Plus_Mobile/) — while keeping the
-old "how confident are you" prompt out and adding a 3-way answer-feedback toggle (check as you
-go / auto-reveal / hide until end) that neither original app had.
+old "how confident are you" prompt (and its favorites feature) out, and adding a 3-way
+answer-feedback toggle (check as you go / auto-reveal / hide until end) that neither original
+app had.
 
 ## Run it locally
 
