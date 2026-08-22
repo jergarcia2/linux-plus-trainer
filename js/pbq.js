@@ -291,8 +291,54 @@ const PBQ = (() => {
   }
 
   /* ---------- check / feedback / navigation ---------- */
+
+  /* Explanations live in different places depending on type: a single
+     scenario-level `expl` for hotspot/scriptfill/terminal, but per-part
+     for multidrop and per-tab for tiles (each part/tab is graded and
+     explained separately). */
+  function getExplanation(s) {
+    if (s.type === 'multidrop') return s.parts.map(p => `${p.label}: ${p.expl || ''}`).join('\n\n');
+    if (s.type === 'tiles') return s.tabs.map(t => `${t.name}: ${t.expl || ''}`).join('\n\n');
+    return s.expl || '';
+  }
+
+  /* Returns a message naming the first incomplete part/tab/blank, or null
+     if everything required has at least been attempted. */
+  function getIncompleteMessage(s) {
+    if (s.type === 'hotspot') {
+      const unset = [...document.querySelectorAll('#pbqBody select')].some(sel => sel.value === s.opts[0]);
+      return unset ? 'Fill in every blank before checking.' : null;
+    }
+    if (s.type === 'multidrop') {
+      for (let pi = 0; pi < s.parts.length; pi++) {
+        const sel = document.querySelector(`#pbqBody select[data-part="${pi}"]`);
+        if (!sel || !sel.value) return `Answer "${s.parts[pi].label}" before checking.`;
+      }
+      return null;
+    }
+    if (s.type === 'tiles') {
+      for (let ti = 0; ti < s.tabs.length; ti++) {
+        if (!tileState[ti] || tileState[ti].length === 0) return `Complete the "${s.tabs[ti].name}" tab before checking.`;
+      }
+      return null;
+    }
+    if (s.type === 'scriptfill') {
+      const missing = allBlanks(s).some(b => !(b.id in scriptFilled));
+      return missing ? 'Fill in every blank before checking.' : null;
+    }
+    return null; // terminal grades itself step-by-step, no Check button shown
+  }
+
   function checkCurrent() {
     const s = scenario();
+    const incomplete = getIncompleteMessage(s);
+    if (incomplete) {
+      const fb = document.getElementById('pbqFeedback');
+      fb.className = 'fb ng';
+      fb.textContent = incomplete;
+      fb.classList.remove('hidden');
+      return; // not graded -- no result recorded, Next stays hidden
+    }
     let ok = false;
     if (s.type === 'hotspot') ok = checkHotspot(s);
     else if (s.type === 'multidrop') ok = checkMultidrop(s);
@@ -308,7 +354,7 @@ const PBQ = (() => {
     recordPbqResult(s.id, ok);
     const fb = document.getElementById('pbqFeedback');
     fb.className = 'fb ' + (ok ? 'ok' : 'ng');
-    fb.textContent = (ok ? '✓ Correct.\n\n' : '✗ Not quite — review the explanation below.\n\n') + (s.expl || '');
+    fb.textContent = (ok ? '✓ Correct.\n\n' : '✗ Not quite — review the explanation below.\n\n') + getExplanation(s);
     fb.classList.remove('hidden');
     document.getElementById('pbqCheckBtn').classList.add('hidden');
     document.getElementById('pbqNextBtn').classList.remove('hidden');
