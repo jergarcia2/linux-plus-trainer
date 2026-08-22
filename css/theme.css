@@ -147,6 +147,7 @@ h1{font-size:26px;margin:0 0 6px;color:var(--text);letter-spacing:-.01em;}
 .bd-reason{color:var(--text-dim);white-space:pre-line;margin-top:3px;}
 
 .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+.top-controls{margin-top:0;margin-bottom:16px;}
 .btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:6px;cursor:pointer;font-size:13.5px;font-weight:600;}
 .btn:hover{border-color:var(--amber-dim);}
 .btn.primary{background:var(--amber);border-color:var(--amber);color:#20140a;}

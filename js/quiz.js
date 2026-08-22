@@ -72,6 +72,8 @@ const Quiz = (() => {
     document.getElementById('submitBtn').addEventListener('click', () => gradeCurrent(session.idx));
     document.getElementById('nextBtn').addEventListener('click', onNext);
     document.getElementById('prevBtn').addEventListener('click', onPrev);
+    document.getElementById('nextBtnTop').addEventListener('click', onNext);
+    document.getElementById('prevBtnTop').addEventListener('click', onPrev);
     document.getElementById('clearBtn').addEventListener('click', () => { session.selections[session.idx] = new Set(); renderQuestion(); });
     document.getElementById('gradeExamBtn').addEventListener('click', finishQuiz);
     document.getElementById('exitExamBtn').addEventListener('click', () => { showScreen('setupScreen'); });
@@ -79,6 +81,8 @@ const Quiz = (() => {
     // results
     document.getElementById('retryBtn').addEventListener('click', () => showScreen('setupScreen'));
     document.getElementById('statsFromResultsBtn').addEventListener('click', () => { buildStats(); showScreen('statsScreen'); });
+    document.getElementById('retryBtnTop').addEventListener('click', () => showScreen('setupScreen'));
+    document.getElementById('statsFromResultsBtnTop').addEventListener('click', () => { buildStats(); showScreen('statsScreen'); });
 
     // stats screen
     document.getElementById('statsBtn').addEventListener('click', () => { buildStats(); showScreen('statsScreen'); });
@@ -199,13 +203,13 @@ const Quiz = (() => {
   }
 
   function onNext() {
-    if (session.idx + 1 < session.questions.length) { session.idx++; renderQuestion(); renderSidebar(); }
+    if (session.idx + 1 < session.questions.length) { session.idx++; renderQuestion(); renderSidebar(); window.scrollTo(0, 0); }
     else finishQuiz();
   }
   function onPrev() {
-    if (session.idx > 0) { session.idx--; renderQuestion(); renderSidebar(); }
+    if (session.idx > 0) { session.idx--; renderQuestion(); renderSidebar(); window.scrollTo(0, 0); }
   }
-  function jumpTo(i) { session.idx = i; renderQuestion(); renderSidebar(); }
+  function jumpTo(i) { session.idx = i; renderQuestion(); renderSidebar(); window.scrollTo(0, 0); }
 
   function renderSidebar() {
     const answered = session.selections.filter(s => s.size > 0).length;
@@ -299,21 +303,32 @@ const Quiz = (() => {
       breakdown.classList.add('hidden');
     }
 
-    document.getElementById('prevBtn').disabled = session.idx === 0;
+    const isFirst = session.idx === 0;
+    document.getElementById('prevBtn').disabled = isFirst;
+    document.getElementById('prevBtnTop').disabled = isFirst;
     const submitBtn = document.getElementById('submitBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const nextBtnTop = document.getElementById('nextBtnTop');
+    const topControls = document.getElementById('topControls');
     if (session.feedbackMode === 'hidetilend') {
       submitBtn.classList.add('hidden');
       nextBtn.classList.remove('hidden');
-      nextBtn.textContent = (session.idx + 1 < session.questions.length) ? 'Next →' : 'Grade Exam →';
+      topControls.classList.remove('hidden');
+      const label = (session.idx + 1 < session.questions.length) ? 'Next →' : 'Grade Exam →';
+      nextBtn.textContent = label;
+      nextBtnTop.textContent = label;
     } else if (checked) {
       submitBtn.classList.add('hidden');
       nextBtn.classList.remove('hidden');
-      nextBtn.textContent = (session.idx + 1 < session.questions.length) ? 'Next →' : 'See Results →';
+      topControls.classList.remove('hidden');
+      const label = (session.idx + 1 < session.questions.length) ? 'Next →' : 'See Results →';
+      nextBtn.textContent = label;
+      nextBtnTop.textContent = label;
     } else {
       submitBtn.classList.remove('hidden');
       submitBtn.disabled = userSet.size === 0;
       nextBtn.classList.add('hidden');
+      topControls.classList.add('hidden');
     }
   }
 
