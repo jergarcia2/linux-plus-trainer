@@ -25,6 +25,8 @@ const PBQ = (() => {
     document.getElementById('pbqCheckBtn').addEventListener('click', checkCurrent);
     document.getElementById('pbqNextBtn').addEventListener('click', nextScenario);
     document.getElementById('pbqStatsToggleBtn').addEventListener('click', toggleStatsPanel);
+    document.getElementById('pbqExitBtn').addEventListener('click', () => { renderSetupStats(); showScreen('setupScreen'); });
+    document.getElementById('pbqDoneHomeBtn').addEventListener('click', () => { renderSetupStats(); showScreen('setupScreen'); });
     renderSetupStats();
   }
 
