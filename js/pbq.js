@@ -294,14 +294,67 @@ const PBQ = (() => {
 
   /* ---------- check / feedback / navigation ---------- */
 
-  /* Explanations live in different places depending on type: a single
-     scenario-level `expl` for hotspot/scriptfill/terminal, but per-part
-     for multidrop and per-tab for tiles (each part/tab is graded and
-     explained separately). */
-  function getExplanation(s) {
-    if (s.type === 'multidrop') return s.parts.map(p => `${p.label}: ${p.expl || ''}`).join('\n\n');
-    if (s.type === 'tiles') return s.tabs.map(t => `${t.name}: ${t.expl || ''}`).join('\n\n');
-    return s.expl || '';
+  /* Builds an HTML breakdown explaining not just "here's the correct
+     answer" but specifically why whatever YOU picked was right or wrong --
+     the same depth the MC quiz's per-option breakdown gives, adapted to
+     each PBQ interaction type. Reuses the .bd-row/.bd-letter/.bd-reason
+     classes from the MC quiz's breakdown styling for visual consistency. */
+  function buildDetailedFeedback(s, ok) {
+    if (s.type === 'hotspot') {
+      const rows = [];
+      s.cmds.forEach((cmd, ci) => {
+        cmd.parts.forEach((part, pi) => {
+          if (part.t !== 's') return;
+          const sel = document.querySelector(`#pbqBody select[data-cmd="${ci}"][data-part="${pi}"]`);
+          const val = sel ? sel.value : '';
+          const correct = val === part.ok;
+          const reason = (s.blankExpl && s.blankExpl[`${ci}-${pi}`]) || '';
+          rows.push(`<div class="bd-row ${correct ? 'is-correct' : 'is-wrong'}">
+            <span class="bd-letter">${correct ? '✓' : '✗'} Command ${ci + 1}:</span>
+            <span>you picked "${escHtml(val)}"${correct ? '' : ` — correct: "${escHtml(part.ok)}"`}</span>
+            <div class="bd-reason">${escHtml(reason)}</div></div>`);
+        });
+      });
+      return rows.join('');
+    }
+    if (s.type === 'multidrop') {
+      return s.parts.map((part, pi) => {
+        const sel = document.querySelector(`#pbqBody select[data-part="${pi}"]`);
+        const pickedValue = sel ? sel.value : '';
+        const opts = Object.keys(part.optExpl || {});
+        if (!opts.length) return `<div class="bd-row is-neutral"><span class="bd-letter">${escHtml(part.label)}</span><div class="bd-reason">${escHtml(part.expl || '')}</div></div>`;
+        const optRows = opts.map(opt => {
+          const isCorrect = opt === part.ok;
+          const picked = opt === pickedValue;
+          const cls = isCorrect ? 'is-correct' : (picked ? 'is-wrong' : 'is-neutral');
+          const mark = isCorrect ? '✓' : (picked ? '✗' : '');
+          return `<div class="bd-row ${cls}"><span class="bd-letter">${mark}</span><span>${escHtml(opt)}</span>
+            <div class="bd-reason">${escHtml(part.optExpl[opt] || '')}</div></div>`;
+        }).join('');
+        return `<div class="pbq-label" style="margin-top:14px;">${escHtml(part.label)}</div>${optRows}`;
+      }).join('');
+    }
+    if (s.type === 'tiles') {
+      return s.tabs.map((tab, ti) => {
+        const built = tileState[ti] || [];
+        const done = tabDone(s, ti);
+        const cmp = done ? '' : `<div class="bd-reason">You built: ${built.length ? escHtml(built.join(' ')) : '(nothing)'}<br>Correct: ${escHtml(tab.ok.join(' '))}</div>`;
+        return `<div class="bd-row ${done ? 'is-correct' : 'is-wrong'}">
+          <span class="bd-letter">${done ? '✓' : '✗'} ${escHtml(tab.name)}</span>
+          ${cmp}<div class="bd-reason">${escHtml(tab.expl || '')}</div></div>`;
+      }).join('');
+    }
+    if (s.type === 'scriptfill') {
+      const rows = allBlanks(s).map(b => {
+        const val = scriptFilled[b.id];
+        const correct = val === b.ok;
+        if (correct) return '';
+        return `<div class="bd-row is-wrong"><span class="bd-letter">✗ Blank ${b.id + 1}:</span>
+          <span>you filled "${val ? escHtml(val) : '(nothing)'}" — correct: "${escHtml(b.ok)}"</span></div>`;
+      }).join('');
+      return rows + `<div class="bd-row is-neutral"><div class="bd-reason">${escHtml(s.expl || '')}</div></div>`;
+    }
+    return `<div class="bd-row is-neutral"><div class="bd-reason">${escHtml(s.expl || '')}</div></div>`;
   }
 
   /* Returns a message naming the first incomplete part/tab/blank, or null
@@ -356,7 +409,8 @@ const PBQ = (() => {
     recordPbqResult(s.id, ok);
     const fb = document.getElementById('pbqFeedback');
     fb.className = 'fb ' + (ok ? 'ok' : 'ng');
-    fb.textContent = (ok ? '✓ Correct.\n\n' : '✗ Not quite — review the explanation below.\n\n') + getExplanation(s);
+    const header = ok ? '✓ Correct.' : '✗ Not quite — see what was right or wrong below:';
+    fb.innerHTML = `<div style="margin-bottom:10px;">${header}</div>` + buildDetailedFeedback(s, ok);
     fb.classList.remove('hidden');
     document.getElementById('pbqCheckBtn').classList.add('hidden');
     document.getElementById('pbqNextBtn').classList.remove('hidden');

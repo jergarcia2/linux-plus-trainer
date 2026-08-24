@@ -97,7 +97,17 @@
     ]
    }
   ],
-  "expl": "parted -s /dev/sdc mklabel gpt\n  → Creates a GPT (GUID Partition Table) label. -s = script/non-interactive mode.\n\nparted -s /dev/sdc mkpart primary ext4 1 10G\n  → Creates a primary partition, ext4 type, from 1MB to 10GB.\n\nmkfs.ext4 /dev/sdc1\n  → Formats /dev/sdc1 with the ext4 filesystem."
+  "expl": "parted -s /dev/sdc mklabel gpt\n  → Creates a GPT (GUID Partition Table) label. -s = script/non-interactive mode.\n\nparted -s /dev/sdc mkpart primary ext4 1 10G\n  → Creates a primary partition, ext4 type, from 1MB to 10GB.\n\nmkfs.ext4 /dev/sdc1\n  → Formats /dev/sdc1 with the ext4 filesystem.",
+  "blankExpl": {
+   "0-1": "Names the target disk for the new GPT label. The scenario adds the new drive at /dev/sdc, so any other device name (sdb, /dev/dev1, sdc without /dev/, etc.) points at the wrong device.",
+   "0-2": "The parted subcommand that creates a new partition table. mkpart (used in the next command) creates an individual partition, not the table itself.",
+   "1-1": "Same device as before: /dev/sdc is the disk that was just labeled and is being partitioned.",
+   "1-2": "The parted subcommand that creates a new partition. mklabel (already done in the previous command) creates the partition table, not a partition.",
+   "1-3": "The partition type -- \"primary\" is a real, standard partition type; \"secondary\" isn't a valid parted partition type at all.",
+   "1-4": "The filesystem-type hint for the new partition -- the task calls for ext4, so any other filesystem name here doesn't match what's being formatted.",
+   "2-1": "mkfs.<type> must match the filesystem actually being created -- the task calls for ext4, not ext2/ext3.",
+   "2-2": "The partition to format -- note the trailing \"1\" (the first partition on /dev/sdc), not the whole raw disk (/dev/sdc) used in the earlier commands."
+  }
  },
  {
   "id": "pbq2",
@@ -122,7 +132,16 @@
      "vgcfgrestore vg01 -t -M /etc/lvm/archive/vg01_00001-810050352.vg"
     ],
     "ok": "vgcfgrestore vg01 -f /etc/lvm/archive/vg01_00002-966141411.vg",
-    "expl": "vgcfgrestore restores the VG (Volume Group) metadata from the LVM archive.\n  -f specifies the archive file (the most recent: _00002)\nThis recovers the LV definitions that were lost when the admin accidentally removed the volume."
+    "expl": "vgcfgrestore restores the VG (Volume Group) metadata from the LVM archive.\n  -f specifies the archive file (the most recent: _00002)\nThis recovers the LV definitions that were lost when the admin accidentally removed the volume.",
+    "optExpl": {
+     "lvchange -a n /dev/vg01/lv01": "Deactivates an LV -- the opposite of what's needed, and at this point the LV doesn't even exist yet (vgs shows 0 LVs), so there's nothing to activate or deactivate until the metadata is restored first.",
+     "lvchange -a y /dev/vg01/lv01": "Activating an LV that doesn't exist yet fails -- the VG metadata has to be restored before any LV can be activated. (This is the right move later, in Part 2 -- not here.)",
+     "vgcfgrestore vg01 -f /etc/lvm/archive/vg01_00002-966141411.vg": "Restores the volume group's metadata from the most recent archived backup (_00002 is the higher, more recent sequence number), bringing back the LV definition that was accidentally removed.",
+     "pvscan": "Only scans and reports physical volumes -- it doesn't restore removed LV metadata.",
+     "lvconvert --type mirror lv01": "Converts an existing LV to mirrored (RAID1) storage -- unrelated to recovering an accidentally removed LV, and there's no LV to convert yet anyway.",
+     "vgcfgrestore vg01 -f /etc/lvm/backup/vg01": "/etc/lvm/backup/ holds the current (already-broken, post-mistake) metadata, not a historical snapshot -- restoring from it just reapplies the same broken state. Point-in-time snapshots live in /etc/lvm/archive/ instead.",
+     "vgcfgrestore vg01 -t -M /etc/lvm/archive/vg01_00001-810050352.vg": "-t runs vgcfgrestore in test mode -- a dry run that doesn't actually restore anything -- and _00001 is an older archive than _00002, so even without -t this would roll back to a less current state."
+    }
    },
    {
     "label": "Part 2",
@@ -137,7 +156,14 @@
      "lvextend -L +54 vg01/lv01 /dev/xvdf"
     ],
     "ok": "lvchange -a y /dev/vg01/lv01",
-    "expl": "lvchange -a y /dev/vg01/lv01 activates the logical volume.\n  -a y = activate yes\nAfter restoring the VG metadata, the LV exists in metadata but is inactive (offline). This brings it online so it can be mounted."
+    "expl": "lvchange -a y /dev/vg01/lv01 activates the logical volume.\n  -a y = activate yes\nAfter restoring the VG metadata, the LV exists in metadata but is inactive (offline). This brings it online so it can be mounted.",
+    "optExpl": {
+     "mount /dev/vg01/lv01/ /important_data": "Arguments are reversed -- mount expects DEVICE then MOUNTPOINT -- and the LV isn't active yet at this point regardless, so the mount would fail either way.",
+     "pvchange -x y /dev/xvdf": "pvchange -x toggles a physical volume's allocation-permission flag; it doesn't activate a logical volume.",
+     "lvchange -a n /dev/vg01/lv01": "-a n deactivates the LV -- the opposite of what's needed to continue the recovery.",
+     "lvchange -a y /dev/vg01/lv01": "After Part 1 restores the VG metadata, the LV exists again but is inactive. -a y activates it so it can be mounted.",
+     "lvextend -L +54 vg01/lv01 /dev/xvdf": "Resizes (grows) an LV -- unrelated to bringing an existing LV online, and premature at this stage of recovery."
+    }
    },
    {
     "label": "Part 3",
@@ -152,7 +178,14 @@
      "lvscan -a"
     ],
     "ok": "mount -a",
-    "expl": "mount -a mounts all filesystems listed in /etc/fstab.\nSince /etc/fstab already has the entry for /dev/vg01/lv01 → /important_data (configured before the accidental removal), mount -a reads that and mounts the now-active LV.\n\nNote: \"mount /important_data /dev/vg01/lv01\" has reversed arguments — mount expects DEVICE then MOUNTPOINT."
+    "expl": "mount -a mounts all filesystems listed in /etc/fstab.\nSince /etc/fstab already has the entry for /dev/vg01/lv01 → /important_data (configured before the accidental removal), mount -a reads that and mounts the now-active LV.\n\nNote: \"mount /important_data /dev/vg01/lv01\" has reversed arguments — mount expects DEVICE then MOUNTPOINT.",
+    "optExpl": {
+     "mount /important_data /dev/vg01/lv01": "Arguments are reversed -- mount syntax is `mount <device> <mountpoint>`, not the other way around.",
+     "xfs_repair /dev/vg01/lv01": "The filesystem isn't corrupted, it was just offline -- running a filesystem repair tool isn't what's needed to bring it back.",
+     "mount -a": "Mounts everything listed in /etc/fstab. Since the mount entry for this LV already existed in fstab before the accidental removal, this brings it back online using that existing configuration -- no need to mount it manually.",
+     "xfs_mdrestore /dev/vg01 /important_data": "xfs_mdrestore restores XFS metadata from a saved metadump image -- not applicable here, since there's no XFS-level corruption and no metadump was taken.",
+     "lvscan -a": "lvscan only lists/scans LVs -- it doesn't mount anything."
+    }
    }
   ]
  },
