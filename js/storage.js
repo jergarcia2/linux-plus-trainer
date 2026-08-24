@@ -81,7 +81,14 @@ function saveSettings(s) {
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (e) {}
 }
 
-/* ---- export / import: identical merge-by-attempts logic to the original apps ---- */
+/* ---- export / import: identical merge-by-attempts logic to the original apps ----
+   iOS Safari (especially installed-to-home-screen standalone PWAs) largely ignores
+   <a download> -- it just navigates to the blob URL instead of saving a file, which
+   makes the classic download-link approach unreliable exactly where "install to
+   home screen" users need it most. Try the Web Share API (native share sheet --
+   Save to Files, AirDrop, Mail, etc.) first, since that's what actually works
+   there; fall back to the download link for desktop/Android browsers where Web
+   Share either isn't available or can't share files. */
 function exportStats() {
   const payload = {
     version: 1,
@@ -89,11 +96,22 @@ function exportStats() {
     data: loadPerf(),
     pbq: loadPbqStats(),
   };
-  const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json' });
+  const filename = 'linux-plus-stats-' + new Date().toISOString().slice(0, 10) + '.json';
+  const json = JSON.stringify(payload, null, 1);
+  const file = new File([json], filename, { type: 'application/json' });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ files: [file], title: filename }).catch(() => downloadStatsFile(json, filename));
+  } else {
+    downloadStatsFile(json, filename);
+  }
+}
+function downloadStatsFile(json, filename) {
+  const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'linux-plus-stats-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
 }
