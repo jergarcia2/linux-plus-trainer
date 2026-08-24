@@ -1940,16 +1940,16 @@
  {
   "q": "Which of the following can be implemented with PAM to detect and block dictionary attacks?",
   "options": {
-   "A": "pam_tallÑƒ2",
+   "A": "pam_tally2",
    "B": "pam_limits",
    "C": "pam_unix",
-   "D": "pam_idap"
+   "D": "pam_ldap"
   },
   "answer": "A",
   "images": [],
   "hasImage": false,
   "chapter": "Module 11: Securing a Linux System",
-  "explanation": "pam_tally tracks failed login attempts and can lock an account after too many failures, blocking dictionary/brute-force attacks at the PAM layer. pam_limits controls resources, pam_unix handles password auth, pam_ldap integrates LDAP.",
+  "explanation": "pam_tally2 tracks failed login attempts and can lock an account after too many failures, blocking dictionary/brute-force attacks at the PAM layer. pam_limits controls resources, pam_unix handles password auth, pam_ldap integrates LDAP.",
   "optExpl": {
    "A": "pam_tally2 (or pam_faillock) tracks failed login attempts per user and can lock an account after a configurable number of failures, blocking dictionary/brute-force attacks.",
    "B": "pam_limits enforces resource limits (open files, max processes, etc.) — not login attempt tracking.",
