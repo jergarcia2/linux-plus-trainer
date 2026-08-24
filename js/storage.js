@@ -74,8 +74,9 @@ function recordPbqResult(id, correct) {
 }
 
 function loadSettings() {
-  try { return Object.assign({ theme: 'dark', feedbackMode: 'checkasyougo' }, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); }
-  catch (e) { return { theme: 'dark', feedbackMode: 'checkasyougo' }; }
+  const defaults = { theme: 'dark', feedbackMode: 'checkasyougo', shuffleAnswers: true };
+  try { return Object.assign({}, defaults, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); }
+  catch (e) { return Object.assign({}, defaults); }
 }
 function saveSettings(s) {
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (e) {}

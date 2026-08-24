@@ -8,7 +8,7 @@ const Quiz = (() => {
   let BANK = [], CHAPTERS = [], CHAPTER_COUNTS = {}, DOMAINS = {}, PBQ_SCENARIOS = [];
   let selectedChapters = new Set();
   let selectedDomain = 'all', selectedDifficulty = 'all';
-  let chosenCount = null, adaptiveMode = true, feedbackMode = 'checkasyougo';
+  let chosenCount = null, adaptiveMode = true, feedbackMode = 'checkasyougo', shuffleAnswers = true;
   let session = null;
 
   function init(data) {
@@ -18,7 +18,9 @@ const Quiz = (() => {
     DOMAINS = data.domains;
     PBQ_SCENARIOS = data.pbqScenarios || [];
     selectedChapters = new Set(CHAPTERS);
-    feedbackMode = loadSettings().feedbackMode || 'checkasyougo';
+    const settings = loadSettings();
+    feedbackMode = settings.feedbackMode || 'checkasyougo';
+    shuffleAnswers = settings.shuffleAnswers !== false;
 
     buildChapterList();
     buildDomainSelect();
@@ -33,6 +35,13 @@ const Quiz = (() => {
         : "Questions in your current selection have equal probability.";
     });
     document.getElementById('adaptiveToggle').classList.add('active');
+
+    document.getElementById('shuffleToggle').addEventListener('click', () => {
+      shuffleAnswers = !shuffleAnswers;
+      document.getElementById('shuffleToggle').classList.toggle('active', shuffleAnswers);
+      const s = loadSettings(); s.shuffleAnswers = shuffleAnswers; saveSettings(s);
+    });
+    document.getElementById('shuffleToggle').classList.toggle('active', shuffleAnswers);
 
     document.getElementById('chapterToggle').addEventListener('click', () => {
       const boxes = document.querySelectorAll('#chapterList input');
@@ -178,6 +187,18 @@ const Quiz = (() => {
     });
   }
 
+  // Fisher-Yates shuffle of an option-letter array, used to randomize display
+  // order without touching the underlying letters that answer/optExpl key off.
+  function shuffledLetters(letters) {
+    const arr = letters.slice();
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  function displayLabel(pos) { return String.fromCharCode(65 + pos); }
+
   function startQuiz(pool, n, preOrdered) {
     const perf = loadPerf();
     const questions = preOrdered ? pool.slice(0, n) : weightedSample(pool, n, perf, adaptiveMode);
@@ -187,6 +208,7 @@ const Quiz = (() => {
       selections: questions.map(() => new Set()),
       checked: questions.map(() => false),
       correct: questions.map(() => null),
+      optionOrder: questions.map(q => shuffleAnswers ? shuffledLetters(Object.keys(q.options)) : Object.keys(q.options)),
       feedbackMode,
     };
     showScreen('quizScreen');
@@ -284,9 +306,12 @@ const Quiz = (() => {
     const userSet = session.selections[session.idx];
     const correctSet = new Set(q.answer.split(''));
 
+    const order = session.optionOrder[session.idx];
     const optsBox = document.getElementById('optsBox');
     optsBox.innerHTML = '';
-    Object.entries(q.options).forEach(([letter, text]) => {
+    order.forEach((letter, i) => {
+      const text = q.options[letter];
+      const label = displayLabel(i);
       const div = document.createElement('div');
       div.className = 'opt';
       if (userSet.has(letter)) div.classList.add('selected');
@@ -295,7 +320,7 @@ const Quiz = (() => {
         if (correctSet.has(letter)) div.classList.add('correct');
         else if (userSet.has(letter)) div.classList.add('incorrect');
       }
-      div.innerHTML = `<span class="optkey">${letter}.</span><span>${escHtml(text)}</span>`;
+      div.innerHTML = `<span class="optkey">${label}.</span><span>${escHtml(text)}</span>`;
       div.addEventListener('click', () => onOptionClick(letter, multi));
       optsBox.appendChild(div);
     });
@@ -303,7 +328,7 @@ const Quiz = (() => {
     const breakdown = document.getElementById('breakdown');
     if (checked && session.feedbackMode !== 'hidetilend') {
       breakdown.classList.remove('hidden');
-      buildBreakdown(q, correctSet, userSet);
+      buildBreakdown(q, correctSet, userSet, order);
     } else {
       breakdown.classList.add('hidden');
     }
@@ -355,7 +380,7 @@ const Quiz = (() => {
     renderSidebar();
   }
 
-  function buildBreakdown(q, correctSet, userSet) {
+  function buildBreakdown(q, correctSet, userSet, order) {
     const rows = document.getElementById('breakdownRows');
     rows.innerHTML = '';
     const tipBox = document.getElementById('examTipBox');
@@ -365,14 +390,16 @@ const Quiz = (() => {
     } else {
       tipBox.classList.add('hidden');
     }
-    Object.entries(q.options).forEach(([letter, text]) => {
+    (order || Object.keys(q.options)).forEach((letter, i) => {
+      const text = q.options[letter];
+      const label = displayLabel(i);
       const isCorrect = correctSet.has(letter);
       const picked = userSet.has(letter);
       const div = document.createElement('div');
       div.className = 'bd-row ' + (isCorrect ? 'is-correct' : (picked ? 'is-wrong' : 'is-neutral'));
       const mark = isCorrect ? '✓' : (picked ? '✗' : '');
       const reason = (q.optExpl && q.optExpl[letter]) || '';
-      div.innerHTML = `<span class="bd-letter">${mark} ${letter}.</span><span>${escHtml(text)}</span><div class="bd-reason">${escHtml(reason)}</div>`;
+      div.innerHTML = `<span class="bd-letter">${mark} ${label}.</span><span>${escHtml(text)}</span><div class="bd-reason">${escHtml(reason)}</div>`;
       rows.appendChild(div);
     });
   }
@@ -415,14 +442,17 @@ const Quiz = (() => {
     session.questions.forEach((q, i) => {
       const correctSet = new Set(q.answer.split(''));
       const userSet = session.selections[i];
+      const order = session.optionOrder[i] || Object.keys(q.options);
       const div = document.createElement('div');
       div.className = 'review-item ' + (session.correct[i] ? 'right' : 'wrong');
-      const optsHtml = Object.entries(q.options).map(([letter, text]) => {
+      const optsHtml = order.map((letter, pos) => {
+        const text = q.options[letter];
+        const label = displayLabel(pos);
         const isCorrect = correctSet.has(letter), picked = userSet.has(letter);
         const cls = isCorrect ? 'is-correct' : (picked ? 'is-wrong' : 'is-neutral');
         const mark = isCorrect ? '✓' : (picked ? '✗' : '');
         const reason = (q.optExpl && q.optExpl[letter]) || '';
-        return `<div class="bd-row ${cls}"><span class="bd-letter">${mark} ${letter}.</span><span>${escHtml(text)}</span><div class="bd-reason">${escHtml(reason)}</div></div>`;
+        return `<div class="bd-row ${cls}"><span class="bd-letter">${mark} ${label}.</span><span>${escHtml(text)}</span><div class="bd-reason">${escHtml(reason)}</div></div>`;
       }).join('');
       const tip = q.examTip ? `<div class="exam-tip"><b>Exam tip:</b> ${escHtml(q.examTip)}</div>` : '';
       div.innerHTML = `<div class="rv-q">Q${i + 1}. ${escHtml(q.q)}</div>${optsHtml}${tip}`;

@@ -9,7 +9,7 @@
      viewed they're available offline and never re-fetched needlessly.
    Bump CACHE_NAME whenever you want to force a clean slate for everyone. */
 
-const CACHE_NAME = 'linuxplus-examprep-v5';
+const CACHE_NAME = 'linuxplus-examprep-v6';
 const SHELL = [
   './',
   './index.html',
