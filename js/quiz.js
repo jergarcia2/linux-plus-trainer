@@ -5,7 +5,7 @@
    ============================================================ */
 
 const Quiz = (() => {
-  let BANK = [], CHAPTERS = [], CHAPTER_COUNTS = {}, DOMAINS = {};
+  let BANK = [], CHAPTERS = [], CHAPTER_COUNTS = {}, DOMAINS = {}, PBQ_SCENARIOS = [];
   let selectedChapters = new Set();
   let selectedDomain = 'all', selectedDifficulty = 'all';
   let chosenCount = null, adaptiveMode = true, feedbackMode = 'checkasyougo';
@@ -16,6 +16,7 @@ const Quiz = (() => {
     CHAPTERS = data.chapters;
     CHAPTER_COUNTS = data.counts;
     DOMAINS = data.domains;
+    PBQ_SCENARIOS = data.pbqScenarios || [];
     selectedChapters = new Set(CHAPTERS);
     feedbackMode = loadSettings().feedbackMode || 'checkasyougo';
 
@@ -447,10 +448,13 @@ const Quiz = (() => {
     const totalAttempts = entries.reduce((a, e) => a + e.attempts, 0);
     const totalCorrect = entries.reduce((a, e) => a + e.correct, 0);
     const seen = entries.length;
+    const pbqStats = loadPbqStats();
+    const pbqSeen = Object.keys(pbqStats).length;
     document.getElementById('statCards').innerHTML = `
       <div class="stat-card"><div class="stat-n">${seen}/${BANK.length}</div><div class="stat-l">Questions seen</div></div>
       <div class="stat-card"><div class="stat-n">${totalAttempts}</div><div class="stat-l">Total attempts</div></div>
-      <div class="stat-card"><div class="stat-n">${totalAttempts ? Math.round(totalCorrect / totalAttempts * 100) : 0}%</div><div class="stat-l">Overall accuracy</div></div>`;
+      <div class="stat-card"><div class="stat-n">${totalAttempts ? Math.round(totalCorrect / totalAttempts * 100) : 0}%</div><div class="stat-l">Overall accuracy</div></div>
+      <div class="stat-card"><div class="stat-n">${pbqSeen}/${PBQ_SCENARIOS.length}</div><div class="stat-l">PBQ scenarios tried</div></div>`;
 
     const chBox = document.getElementById('chapterStats');
     chBox.innerHTML = '';
@@ -482,6 +486,19 @@ const Quiz = (() => {
       el.innerHTML = `<div class="ch-stat-row"><span>${escHtml(dom)}</span><span>${pct < 0 ? 'not started' : Math.round(pct) + '%'}</span></div>
         <div class="cs-bar-track"><div class="cs-bar-fill" style="width:${Math.max(0, pct)}%;background:${perfColor(pct < 0 ? 0 : pct)}"></div></div>`;
       domBox.appendChild(el);
+    });
+
+    const pbqBox = document.getElementById('pbqStatsInMainStats');
+    pbqBox.innerHTML = '';
+    PBQ_SCENARIOS.forEach(s => {
+      const st = pbqStats[s.id];
+      const pct = st && st.attempts ? Math.round(st.correct / st.attempts * 100) : -1;
+      const el = document.createElement('div');
+      el.className = 'ch-stat';
+      el.innerHTML = `<div class="ch-stat-row"><span>${escHtml(s.title)}</span><span>${pct < 0 ? 'not attempted' : pct + '%'}</span></div>
+        <div class="cs-bar-track"><div class="cs-bar-fill" style="width:${Math.max(0, pct)}%;background:${perfColor(pct < 0 ? 0 : pct)}"></div></div>
+        ${st ? `<div class="ch-stat-row seen"><span>${st.attempts} attempt${st.attempts === 1 ? '' : 's'}</span></div>` : ''}`;
+      pbqBox.appendChild(el);
     });
   }
 

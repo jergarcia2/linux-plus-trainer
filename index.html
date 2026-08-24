@@ -97,7 +97,7 @@
 
     <div id="pbqSetup" class="hidden">
       <h1>Performance-Based Questions</h1>
-      <div class="sub">Fully interactive PBQ scenarios &mdash; drag/click tokens, fill in dropdowns, or type real commands at a simulated terminal, then grade against the exam-style explanation. <b id="pbqCount">6 scenarios</b>.</div>
+      <div class="sub">Fully interactive PBQ scenarios &mdash; drag/click tokens, fill in dropdowns, or type real commands at a simulated terminal, then grade against the exam-style explanation. <b id="pbqCount">6 scenarios</b>. To back up or transfer this progress, use Export/Import under <b>My Stats</b> (top right) — it covers PBQ scenarios along with quiz questions in one file.</div>
       <div id="pbqStatsBox" class="pbq-stats-box"></div>
       <button class="start-btn" id="pbqStartBtn">Start Interactive PBQs</button>
     </div>
@@ -173,12 +173,14 @@
   <!-- ===================== STATS ===================== -->
   <section id="statsScreen" class="screen hidden">
     <h1 class="screen-h1">My Performance Stats</h1>
-    <div class="snote"><b>Stats persist in your browser's localStorage</b> — separately per browser and per device, including between this installed app and a regular browser tab. Tap Export to save a backup (on iPhone/Android this opens the share sheet — save to Files/iCloud Drive, or send to yourself); use Import on the other browser or device to pick that file back up and merge it in.</div>
+    <div class="snote"><b>Stats persist in your browser's localStorage</b> — separately per browser and per device, including between this installed app and a regular browser tab. Export/Import below cover <b>both</b> quiz questions and PBQ scenarios together in one file. Tap Export to save a backup (on iPhone/Android this opens the share sheet — save to Files/iCloud Drive, or send to yourself); use Import on the other browser or device to pick that file back up and merge it in.</div>
     <div class="stat-grid" id="statCards"></div>
     <div class="section-label">By Chapter — sorted weakest first</div>
     <div id="chapterStats"></div>
     <div class="section-label">By Domain</div>
     <div id="domainStats"></div>
+    <div class="section-label">Performance-Based Scenarios</div>
+    <div id="pbqStatsInMainStats"></div>
     <div class="controls">
       <button class="btn danger" id="clearStatsBtn">Clear Stats</button>
       <label class="import-lbl" for="importFile">Import</label>
