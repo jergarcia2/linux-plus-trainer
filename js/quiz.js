@@ -97,7 +97,11 @@ const Quiz = (() => {
     document.getElementById('exportStatsBtn').addEventListener('click', exportStats);
     document.getElementById('importFile').addEventListener('change', e => {
       const f = e.target.files[0];
-      if (f) importStatsFile(f, () => { buildChapterList(); refreshCountUI(); buildStats(); renderDashboard(); });
+      if (f) importStatsFile(f, () => {
+        buildChapterList(); refreshCountUI(); buildStats(); renderDashboard();
+        if (typeof PBQ !== 'undefined' && PBQ.renderSetupStats) PBQ.renderSetupStats();
+        alert('Stats imported.');
+      });
     });
 
     // lightbox

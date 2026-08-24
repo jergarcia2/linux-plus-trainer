@@ -368,5 +368,5 @@ const PBQ = (() => {
     else { showScreen('pbqDoneScreen'); renderSetupStats(); }
   }
 
-  return { init };
+  return { init, renderSetupStats };
 })();
