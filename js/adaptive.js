@@ -44,8 +44,9 @@ function weightedSample(pool, n, perf, adaptive) {
 }
 
 /* Preset used by "Last-Hour Cram": a small pool, heavily adaptive-weighted
-   toward weak modules/domains, skipping questions you've already nailed
-   with a streak. */
+   toward weak modules/domains, low-accuracy questions, and questions you've
+   barely seen -- skipping only questions you've actually proven you know
+   over several attempts, not just a lucky short streak. */
 function buildCramPool(bank, perf) {
   const weak = new Set();
   const chapterAcc = {};
@@ -60,12 +61,25 @@ function buildCramPool(bank, perf) {
   Object.entries(chapterAcc).forEach(([c, v]) => {
     if (v.att > 0 && v.cor / v.att < 0.75) weak.add(c);
   });
-  return bank.filter(q => {
-    const p = perf['q' + q._idx];
-    const mastered = p && p.attempts >= 2 && p.streak >= 2;
-    return !mastered;
-  }).sort((a, b) => {
-    const score = q => (weak.has(q.chapter) ? 2 : 0) + calcWeight(q._idx, perf);
+
+  // "Truly mastered" needs a real track record -- several attempts, strong
+  // overall accuracy, AND a decent current streak. Two correct answers in a
+  // row used to be enough to permanently retire a question from cram even
+  // if its lifetime accuracy was terrible; that's what was emptying the
+  // pool once every question had at least one short lucky streak.
+  const isMastered = p => !!p && p.attempts >= 3 && (p.correct / p.attempts) >= 0.9 && p.streak >= 3;
+
+  let pool = bank.filter(q => !isMastered(perf['q' + q._idx]));
+  if (!pool.length) pool = bank.slice(); // safety net: never come back empty
+
+  return pool.sort((a, b) => {
+    const score = q => {
+      const p = perf['q' + q._idx];
+      const acc = p && p.attempts ? p.correct / p.attempts : -1;
+      const lowAccBoost = acc >= 0 && acc < 0.8 ? (0.8 - acc) * 3 : 0; // worse accuracy -> bigger boost
+      const lowExposureBoost = p && p.attempts > 0 && p.attempts < 3 ? 1 : 0; // barely-seen questions
+      return (weak.has(q.chapter) ? 1 : 0) + lowAccBoost + lowExposureBoost + calcWeight(q._idx, perf);
+    };
     return score(b) - score(a);
   });
 }

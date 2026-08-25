@@ -1,0 +1,671 @@
+[
+ {
+  "name": "getent",
+  "syntax": "getent DATABASE [KEY]",
+  "desc": "Query NSS databases such as passwd, group, and hosts.",
+  "examples": [
+   "getent passwd accounting",
+   "getent group wheel"
+  ],
+  "tip": "Use it when the question asks for account fields from the configured identity sources."
+ },
+ {
+  "name": "id",
+  "syntax": "id [USER]",
+  "desc": "Display UID, GID, and group memberships.",
+  "examples": [
+   "id accounting",
+   "id -nG user"
+  ],
+  "tip": "Unlike getent passwd, id focuses on numeric identity and memberships."
+ },
+ {
+  "name": "useradd",
+  "syntax": "useradd [OPTIONS] USER",
+  "desc": "Create a local user account.",
+  "examples": [
+   "sudo useradd -m student",
+   "sudo useradd -s /bin/bash analyst"
+  ],
+  "tip": "Remember -m creates the home directory."
+ },
+ {
+  "name": "usermod",
+  "syntax": "usermod [OPTIONS] USER",
+  "desc": "Modify an existing user account.",
+  "examples": [
+   "sudo usermod -aG wheel user",
+   "sudo usermod -s /sbin/nologin user"
+  ],
+  "tip": "Exam trap: -G without -a replaces supplementary groups."
+ },
+ {
+  "name": "passwd",
+  "syntax": "passwd [OPTIONS] [USER]",
+  "desc": "Set, lock, unlock, or inspect password status.",
+  "examples": [
+   "sudo passwd user",
+   "sudo passwd -l user"
+  ],
+  "tip": "-l locks password authentication; it does not necessarily terminate existing sessions."
+ },
+ {
+  "name": "chage",
+  "syntax": "chage [OPTIONS] USER",
+  "desc": "Manage password-aging information.",
+  "examples": [
+   "sudo chage -l user",
+   "sudo chage -M 90 user"
+  ],
+  "tip": "Use -l to list aging settings."
+ },
+ {
+  "name": "chmod",
+  "syntax": "chmod MODE FILE",
+  "desc": "Change permission bits.",
+  "examples": [
+   "chmod 755 script.sh",
+   "chmod u+x deploy.sh"
+  ],
+  "tip": "755 gives owner rwx and group/others r-x."
+ },
+ {
+  "name": "chown",
+  "syntax": "chown OWNER[:GROUP] FILE",
+  "desc": "Change owner and optionally group.",
+  "examples": [
+   "sudo chown alice report.txt",
+   "sudo chown -R web:web /srv/site"
+  ],
+  "tip": "chmod changes permissions; chown changes ownership."
+ },
+ {
+  "name": "chgrp",
+  "syntax": "chgrp GROUP FILE",
+  "desc": "Change group ownership.",
+  "examples": [
+   "sudo chgrp developers project",
+   "sudo chgrp -R apache /var/www"
+  ],
+  "tip": "Use chgrp when only the group must change."
+ },
+ {
+  "name": "umask",
+  "syntax": "umask [MASK]",
+  "desc": "Control default permission bits removed at creation.",
+  "examples": [
+   "umask 022",
+   "umask 027"
+  ],
+  "tip": "Typical base permissions: files 666, directories 777, then subtract the mask."
+ },
+ {
+  "name": "setfacl",
+  "syntax": "setfacl [OPTIONS] FILE",
+  "desc": "Set POSIX ACL entries.",
+  "examples": [
+   "setfacl -m u:alice:rw file",
+   "setfacl -m d:g:dev:rwx shared/"
+  ],
+  "tip": "Default ACLs apply to newly created children."
+ },
+ {
+  "name": "getfacl",
+  "syntax": "getfacl FILE",
+  "desc": "Display POSIX ACLs.",
+  "examples": [
+   "getfacl report.txt",
+   "getfacl -R shared/"
+  ],
+  "tip": "Use this to verify effective ACL entries."
+ },
+ {
+  "name": "find",
+  "syntax": "find PATH TESTS ACTIONS",
+  "desc": "Search the live filesystem.",
+  "examples": [
+   "find /var/log -name \"*.log\"",
+   "find /home -type f -mtime -7"
+  ],
+  "tip": "Newly created file clues usually point to find, not locate."
+ },
+ {
+  "name": "locate",
+  "syntax": "locate PATTERN",
+  "desc": "Search a prebuilt filename database.",
+  "examples": [
+   "locate sshd_config",
+   "locate \"*.service\""
+  ],
+  "tip": "Fast, but results can be stale until updatedb runs."
+ },
+ {
+  "name": "grep",
+  "syntax": "grep [OPTIONS] PATTERN [FILE]",
+  "desc": "Search text for matching lines.",
+  "examples": [
+   "grep -R \"PermitRootLogin\" /etc/ssh",
+   "journalctl | grep failed"
+  ],
+  "tip": "-i ignores case; -R searches recursively."
+ },
+ {
+  "name": "awk",
+  "syntax": "awk PROGRAM [FILE]",
+  "desc": "Process records and fields.",
+  "examples": [
+   "awk -F: '{print $1}' /etc/passwd",
+   "df -h | awk 'NR>1 {print $5,$6}'"
+  ],
+  "tip": "Think columns and fields."
+ },
+ {
+  "name": "sed",
+  "syntax": "sed [OPTIONS] SCRIPT [FILE]",
+  "desc": "Transform text streams.",
+  "examples": [
+   "sed 's/old/new/g' file",
+   "sed -n '1,10p' file"
+  ],
+  "tip": "Without -i, sed normally writes transformed output to stdout."
+ },
+ {
+  "name": "cut",
+  "syntax": "cut OPTION FILE",
+  "desc": "Extract selected fields or character positions.",
+  "examples": [
+   "cut -d: -f1 /etc/passwd",
+   "cut -c1-8 file"
+  ],
+  "tip": "Use -d with -f for delimited fields."
+ },
+ {
+  "name": "sort",
+  "syntax": "sort [OPTIONS] FILE",
+  "desc": "Sort lines.",
+  "examples": [
+   "sort names.txt",
+   "sort -n scores.txt"
+  ],
+  "tip": "-n selects numeric sorting."
+ },
+ {
+  "name": "uniq",
+  "syntax": "uniq [OPTIONS] FILE",
+  "desc": "Filter adjacent duplicate lines.",
+  "examples": [
+   "sort file | uniq",
+   "sort file | uniq -c"
+  ],
+  "tip": "uniq only detects adjacent duplicates, so sort first."
+ },
+ {
+  "name": "tee",
+  "syntax": "tee [OPTIONS] FILE",
+  "desc": "Write stdin to both stdout and files.",
+  "examples": [
+   "command | tee output.txt",
+   "command | sudo tee /etc/file"
+  ],
+  "tip": "Useful when shell redirection would not inherit sudo."
+ },
+ {
+  "name": "cp",
+  "syntax": "cp [OPTIONS] SOURCE DEST",
+  "desc": "Copy files or directories.",
+  "examples": [
+   "cp file backup/",
+   "cp -a source/ backup/"
+  ],
+  "tip": "-a preserves metadata and recursively copies."
+ },
+ {
+  "name": "mv",
+  "syntax": "mv SOURCE DEST",
+  "desc": "Move or rename files.",
+  "examples": [
+   "mv old new",
+   "mv file /tmp/"
+  ],
+  "tip": "Within one filesystem, mv generally renames directory entries."
+ },
+ {
+  "name": "ln",
+  "syntax": "ln [-s] TARGET LINK_NAME",
+  "desc": "Create hard or symbolic links.",
+  "examples": [
+   "ln file hardlink",
+   "ln -s /opt/app current"
+  ],
+  "tip": "Hard links cannot cross filesystems; symbolic links can."
+ },
+ {
+  "name": "tar",
+  "syntax": "tar [OPTIONS] ARCHIVE FILES",
+  "desc": "Create, list, or extract archives.",
+  "examples": [
+   "tar -czf backup.tgz /etc",
+   "tar -xvf archive.tar"
+  ],
+  "tip": "c=create, x=extract, t=list, f=archive filename."
+ },
+ {
+  "name": "rsync",
+  "syntax": "rsync [OPTIONS] SOURCE DEST",
+  "desc": "Synchronize files efficiently.",
+  "examples": [
+   "rsync -av source/ backup/",
+   "rsync -avz dir/ host:/backup/"
+  ],
+  "tip": "A trailing slash changes whether the source directory itself or its contents are copied."
+ },
+ {
+  "name": "dd",
+  "syntax": "dd if=INPUT of=OUTPUT [OPTIONS]",
+  "desc": "Copy raw blocks of data.",
+  "examples": [
+   "sudo dd if=/dev/sda of=disk.img bs=4M status=progress",
+   "dd if=/dev/zero of=test bs=1M count=100"
+  ],
+  "tip": "Double-check if= and of=; reversing them can destroy data."
+ },
+ {
+  "name": "dnf",
+  "syntax": "dnf [OPTIONS] COMMAND",
+  "desc": "Manage RPM packages and repositories.",
+  "examples": [
+   "sudo dnf install httpd",
+   "dnf history"
+  ],
+  "tip": "dnf resolves dependencies; rpm works directly with package files."
+ },
+ {
+  "name": "rpm",
+  "syntax": "rpm [OPTIONS] PACKAGE",
+  "desc": "Query or manage individual RPM packages.",
+  "examples": [
+   "rpm -q bash",
+   "rpm -ql openssh-server"
+  ],
+  "tip": "-q queries; -ql lists files in an installed package."
+ },
+ {
+  "name": "apt",
+  "syntax": "apt COMMAND [PACKAGE]",
+  "desc": "Manage Debian packages and repositories.",
+  "examples": [
+   "sudo apt update",
+   "sudo apt install nginx"
+  ],
+  "tip": "update refreshes metadata; upgrade installs available updates."
+ },
+ {
+  "name": "dpkg",
+  "syntax": "dpkg [OPTIONS] PACKAGE",
+  "desc": "Manage individual Debian packages.",
+  "examples": [
+   "sudo dpkg -i app.deb",
+   "dpkg -L bash"
+  ],
+  "tip": "dpkg does not automatically resolve repository dependencies."
+ },
+ {
+  "name": "systemctl",
+  "syntax": "systemctl COMMAND UNIT",
+  "desc": "Manage systemd units.",
+  "examples": [
+   "sudo systemctl enable --now sshd",
+   "systemctl status NetworkManager"
+  ],
+  "tip": "start=now; enable=boot; --now combines both."
+ },
+ {
+  "name": "journalctl",
+  "syntax": "journalctl [OPTIONS]",
+  "desc": "Query the systemd journal.",
+  "examples": [
+   "journalctl -u sshd",
+   "journalctl -b -p err"
+  ],
+  "tip": "-u filters by unit; -b limits to a boot."
+ },
+ {
+  "name": "ps",
+  "syntax": "ps [OPTIONS]",
+  "desc": "Display process information.",
+  "examples": [
+   "ps aux",
+   "ps -ef"
+  ],
+  "tip": "aux is BSD-style; -ef is UNIX-style."
+ },
+ {
+  "name": "top",
+  "syntax": "top",
+  "desc": "Interactively display processes and resource use.",
+  "examples": [
+   "top",
+   "top -H"
+  ],
+  "tip": "Use load, CPU, memory, and process state together to identify bottlenecks."
+ },
+ {
+  "name": "kill",
+  "syntax": "kill [-SIGNAL] PID",
+  "desc": "Send a signal to a process ID.",
+  "examples": [
+   "kill 1234",
+   "kill -TERM 1234"
+  ],
+  "tip": "TERM requests graceful shutdown; KILL cannot be handled."
+ },
+ {
+  "name": "pkill",
+  "syntax": "pkill [OPTIONS] PATTERN",
+  "desc": "Signal processes selected by name or attributes.",
+  "examples": [
+   "pkill firefox",
+   "pkill -u alice"
+  ],
+  "tip": "Use carefully because it may match multiple processes."
+ },
+ {
+  "name": "nice",
+  "syntax": "nice -n VALUE COMMAND",
+  "desc": "Start a process with a selected nice value.",
+  "examples": [
+   "nice -n 10 backup.sh",
+   "nice command"
+  ],
+  "tip": "Higher nice value means lower CPU priority."
+ },
+ {
+  "name": "renice",
+  "syntax": "renice VALUE -p PID",
+  "desc": "Change the nice value of a running process.",
+  "examples": [
+   "sudo renice 10 -p 1234",
+   "renice -5 -p 1234"
+  ],
+  "tip": "Negative nice values normally require elevated privileges."
+ },
+ {
+  "name": "ip",
+  "syntax": "ip OBJECT COMMAND",
+  "desc": "Inspect or configure networking.",
+  "examples": [
+   "ip addr show",
+   "ip route show"
+  ],
+  "tip": "Use ip addr for addresses and ip route for routes."
+ },
+ {
+  "name": "ss",
+  "syntax": "ss [OPTIONS]",
+  "desc": "Display socket information.",
+  "examples": [
+   "ss -tulpn",
+   "ss -s"
+  ],
+  "tip": "Modern replacement for many netstat use cases."
+ },
+ {
+  "name": "ping",
+  "syntax": "ping [OPTIONS] HOST",
+  "desc": "Test IP reachability with ICMP.",
+  "examples": [
+   "ping -c 4 8.8.8.8",
+   "ping -6 host"
+  ],
+  "tip": "A failed ping does not always prove the host is down; ICMP may be filtered."
+ },
+ {
+  "name": "dig",
+  "syntax": "dig [OPTIONS] NAME",
+  "desc": "Query DNS.",
+  "examples": [
+   "dig example.com",
+   "dig +short example.com"
+  ],
+  "tip": "Use +short for concise output."
+ },
+ {
+  "name": "nmcli",
+  "syntax": "nmcli OBJECT COMMAND",
+  "desc": "Manage NetworkManager.",
+  "examples": [
+   "nmcli device status",
+   "nmcli connection show"
+  ],
+  "tip": "Distinguish devices from saved connections."
+ },
+ {
+  "name": "curl",
+  "syntax": "curl [OPTIONS] URL",
+  "desc": "Transfer data and test services using URLs.",
+  "examples": [
+   "curl -I https://example.com",
+   "curl -O https://host/file"
+  ],
+  "tip": "-I requests headers; -O keeps the remote filename."
+ },
+ {
+  "name": "lsblk",
+  "syntax": "lsblk [OPTIONS]",
+  "desc": "List block devices and relationships.",
+  "examples": [
+   "lsblk",
+   "lsblk -f"
+  ],
+  "tip": "-f adds filesystem type, label, and UUID."
+ },
+ {
+  "name": "blkid",
+  "syntax": "blkid [DEVICE]",
+  "desc": "Display filesystem metadata and UUIDs.",
+  "examples": [
+   "sudo blkid",
+   "blkid /dev/sdb1"
+  ],
+  "tip": "UUIDs are commonly used in /etc/fstab."
+ },
+ {
+  "name": "df",
+  "syntax": "df [OPTIONS] [PATH]",
+  "desc": "Report filesystem space usage.",
+  "examples": [
+   "df -h",
+   "df -i"
+  ],
+  "tip": "-i checks inode exhaustion, which can occur even when blocks remain."
+ },
+ {
+  "name": "du",
+  "syntax": "du [OPTIONS] PATH",
+  "desc": "Report file and directory usage.",
+  "examples": [
+   "du -sh /var/log",
+   "du -h --max-depth=1 /home"
+  ],
+  "tip": "df reports filesystem totals; du measures files and directories."
+ },
+ {
+  "name": "mount",
+  "syntax": "mount [OPTIONS] DEVICE DIR",
+  "desc": "Attach a filesystem.",
+  "examples": [
+   "sudo mount /dev/sdb1 /mnt/data",
+   "mount | grep noexec"
+  ],
+  "tip": "Mount options can block execution even when permissions allow it."
+ },
+ {
+  "name": "fsck",
+  "syntax": "fsck [OPTIONS] DEVICE",
+  "desc": "Check and repair supported filesystems.",
+  "examples": [
+   "sudo fsck /dev/sdb1",
+   "sudo fsck -f /dev/sdb1"
+  ],
+  "tip": "Usually run on an unmounted filesystem."
+ },
+ {
+  "name": "pvcreate",
+  "syntax": "pvcreate DEVICE",
+  "desc": "Initialize an LVM physical volume.",
+  "examples": [
+   "sudo pvcreate /dev/sdb",
+   "sudo pvs"
+  ],
+  "tip": "LVM order: PV → VG → LV → filesystem."
+ },
+ {
+  "name": "vgcreate",
+  "syntax": "vgcreate VG PV",
+  "desc": "Create an LVM volume group.",
+  "examples": [
+   "sudo vgcreate data_vg /dev/sdb",
+   "sudo vgs"
+  ],
+  "tip": "A volume group pools one or more physical volumes."
+ },
+ {
+  "name": "lvcreate",
+  "syntax": "lvcreate [OPTIONS] VG",
+  "desc": "Create an LVM logical volume.",
+  "examples": [
+   "sudo lvcreate -L 10G -n data data_vg",
+   "sudo lvs"
+  ],
+  "tip": "Create a filesystem after creating the LV."
+ },
+ {
+  "name": "lvextend",
+  "syntax": "lvextend [OPTIONS] LV",
+  "desc": "Extend an LVM logical volume.",
+  "examples": [
+   "sudo lvextend -L +5G /dev/data_vg/data",
+   "sudo lvextend -r -l +100%FREE /dev/data_vg/data"
+  ],
+  "tip": "-r grows the filesystem with the LV when supported."
+ },
+ {
+  "name": "getenforce",
+  "syntax": "getenforce",
+  "desc": "Show the current SELinux mode.",
+  "examples": [
+   "getenforce"
+  ],
+  "tip": "It reports Enforcing, Permissive, or Disabled."
+ },
+ {
+  "name": "setenforce",
+  "syntax": "setenforce 0|1",
+  "desc": "Temporarily change SELinux enforcing state.",
+  "examples": [
+   "sudo setenforce 0",
+   "sudo setenforce 1"
+  ],
+  "tip": "This is not persistent across reboot."
+ },
+ {
+  "name": "restorecon",
+  "syntax": "restorecon [OPTIONS] PATH",
+  "desc": "Restore default SELinux file contexts.",
+  "examples": [
+   "sudo restorecon -Rv /var/www",
+   "restorecon file"
+  ],
+  "tip": "Use after moving or creating content where policy expects a specific label."
+ },
+ {
+  "name": "semanage",
+  "syntax": "semanage OBJECT COMMAND",
+  "desc": "Manage persistent SELinux policy mappings.",
+  "examples": [
+   "sudo semanage fcontext -a -t httpd_sys_content_t \"/web(/.*)?\"",
+   "sudo semanage port -l"
+  ],
+  "tip": "Pair fcontext changes with restorecon."
+ },
+ {
+  "name": "podman",
+  "syntax": "podman COMMAND",
+  "desc": "Manage OCI containers and images.",
+  "examples": [
+   "podman ps",
+   "podman run --rm alpine echo hello"
+  ],
+  "tip": "Podman is daemonless and commonly used on Red Hat systems."
+ },
+ {
+  "name": "crontab",
+  "syntax": "crontab [OPTIONS]",
+  "desc": "Manage recurring per-user cron jobs.",
+  "examples": [
+   "crontab -e",
+   "crontab -l"
+  ],
+  "tip": "Cron fields are minute, hour, day-of-month, month, day-of-week."
+ },
+ {
+  "name": "at",
+  "syntax": "at TIME",
+  "desc": "Schedule a one-time job.",
+  "examples": [
+   "echo \"systemctl restart app\" | at 23:00",
+   "atq"
+  ],
+  "tip": "Use cron for recurring tasks and at for one-time tasks."
+ },
+ {
+  "name": "ssh",
+  "syntax": "ssh [USER@]HOST",
+  "desc": "Open an encrypted remote shell.",
+  "examples": [
+   "ssh admin@server",
+   "ssh -i key.pem user@host"
+  ],
+  "tip": "Check permissions on private keys and host-key prompts."
+ },
+ {
+  "name": "scp",
+  "syntax": "scp SOURCE DEST",
+  "desc": "Copy files over SSH.",
+  "examples": [
+   "scp file user@host:/tmp/",
+   "scp user@host:/tmp/file ."
+  ],
+  "tip": "Use rsync when efficient synchronization or resume behavior matters."
+ },
+ {
+  "name": "modprobe",
+  "syntax": "modprobe MODULE",
+  "desc": "Load or remove kernel modules with dependency handling.",
+  "examples": [
+   "sudo modprobe bluetooth",
+   "sudo modprobe -r bluetooth"
+  ],
+  "tip": "Prefer modprobe over insmod when dependencies matter."
+ },
+ {
+  "name": "lsmod",
+  "syntax": "lsmod",
+  "desc": "List loaded kernel modules.",
+  "examples": [
+   "lsmod",
+   "lsmod | grep bluetooth"
+  ],
+  "tip": "Use modinfo for module metadata."
+ },
+ {
+  "name": "sysctl",
+  "syntax": "sysctl [OPTIONS] KEY[=VALUE]",
+  "desc": "Read or change runtime kernel parameters.",
+  "examples": [
+   "sysctl net.ipv4.ip_forward",
+   "sudo sysctl -w net.ipv4.ip_forward=1"
+  ],
+  "tip": "Persistent settings belong in sysctl configuration files."
+ }
+]
