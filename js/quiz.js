@@ -97,6 +97,7 @@ const Quiz = (() => {
     // stats screen
     document.getElementById('statsBtn').addEventListener('click', () => { buildStats(); showScreen('statsScreen'); });
     document.getElementById('statsBackBtn').addEventListener('click', () => showScreen('setupScreen'));
+    document.getElementById('statsBackBtnTop').addEventListener('click', () => showScreen('setupScreen'));
     document.getElementById('clearStatsBtn').addEventListener('click', () => {
       if (confirm('Clear all MC quiz stats? This cannot be undone.')) {
         localStorage.removeItem(PERF_KEY);
