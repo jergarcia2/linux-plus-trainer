@@ -3,7 +3,7 @@
    screen navigation, PWA install + service worker registration.
    ============================================================ */
 
-const SCREENS = ['setupScreen', 'quizScreen', 'resultsScreen', 'statsScreen', 'readinessScreen', 'commandsScreen', 'pbqScreen', 'pbqDoneScreen'];
+const SCREENS = ['setupScreen', 'quizScreen', 'resultsScreen', 'statsScreen', 'readinessScreen', 'commandsScreen', 'acronymsScreen', 'pbqScreen', 'pbqDoneScreen'];
 
 function showScreen(id) {
   SCREENS.forEach(s => document.getElementById(s).classList.toggle('hidden', s !== id));
@@ -22,12 +22,13 @@ function applyTheme(theme) {
 }
 
 async function loadData() {
-  const [bank, chaptersFile, domains, pbqScenarios, commands] = await Promise.all([
+  const [bank, chaptersFile, domains, pbqScenarios, commands, acronyms] = await Promise.all([
     fetch('data/bank.json').then(r => r.json()),
     fetch('data/chapters.json').then(r => r.json()),
     fetch('data/domains.json').then(r => r.json()),
     fetch('data/pbq_scenarios.json').then(r => r.json()),
     fetch('data/commands.json').then(r => r.json()),
+    fetch('data/acronyms.json').then(r => r.json()),
   ]);
   return {
     bank,
@@ -36,6 +37,7 @@ async function loadData() {
     domains,
     pbqScenarios,
     commands,
+    acronyms,
   };
 }
 
@@ -74,6 +76,7 @@ async function main() {
   Quiz.init(data);
   PBQ.init(data.pbqScenarios);
   Commands.init(data.commands);
+  Acronyms.init(data.acronyms);
   showScreen('setupScreen');
 
   // --- PWA install prompt ---

@@ -30,20 +30,20 @@ const Commands = (() => {
     const box = document.getElementById('cmdList');
     box.innerHTML = '';
     if (!matches.length) {
-      box.innerHTML = '<div class="cmd-empty">No commands match your search.</div>';
+      box.innerHTML = '<div class="ref-empty">No commands match your search.</div>';
       return;
     }
     matches.forEach(c => {
       const row = document.createElement('div');
-      row.className = 'cmd-row';
+      row.className = 'ref-row';
       const isOpen = expanded.has(c.name);
-      let html = `<div class="cmd-row-head"><span class="cmd-name">${escHtml(c.name)}</span><span class="cmd-desc">${escHtml(c.desc)}</span></div>`;
+      let html = `<div class="ref-row-head"><span class="ref-key">${escHtml(c.name)}</span><span class="ref-desc">${escHtml(c.desc)}</span></div>`;
       if (isOpen) {
-        html += `<div class="cmd-body">
-          <div class="cmd-label">Syntax</div>
-          <div class="cmd-code">${escHtml(c.syntax)}</div>
-          <div class="cmd-label">Examples</div>
-          ${c.examples.map(ex => `<div class="cmd-code">${escHtml(ex)}</div>`).join('')}
+        html += `<div class="ref-body">
+          <div class="ref-label">Syntax</div>
+          <div class="ref-code">${escHtml(c.syntax)}</div>
+          <div class="ref-label">Examples</div>
+          ${c.examples.map(ex => `<div class="ref-code">${escHtml(ex)}</div>`).join('')}
           <div class="exam-tip"><b>Exam tip:</b> ${escHtml(c.tip)}</div>
         </div>`;
       }

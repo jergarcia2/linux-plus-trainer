@@ -52,10 +52,10 @@ h1{font-size:26px;margin:0 0 6px;color:var(--text);letter-spacing:-.01em;}
 .dash-tile-warn .dash-n{color:var(--red);}
 .dash-tile-warn.dash-clear .dash-n{color:var(--green);}
 
-.quick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
-.quick-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:12px 8px;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;}
+.quick-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:20px;}
+.quick-btn{display:flex;flex-direction:column;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:14px 8px;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600;}
 .quick-btn:hover{border-color:var(--amber);}
-.quick-btn span{color:var(--amber);margin-left:4px;}
+.quick-icon svg{width:20px;height:20px;color:var(--amber);display:block;}
 
 .adaptive-row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:14px 16px;margin-bottom:20px;cursor:pointer;}
 .adaptive-row.active{border-color:var(--amber);background:color-mix(in srgb, var(--amber) 10%, var(--panel));}
@@ -146,16 +146,20 @@ h1{font-size:26px;margin:0 0 6px;color:var(--text);letter-spacing:-.01em;}
 .bd-letter{font-family:var(--mono);font-weight:700;margin-right:6px;}
 .bd-reason{color:var(--text-dim);white-space:pre-line;margin-top:3px;}
 
-.cmd-search{margin-bottom:16px;}
-.cmd-row{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:8px;cursor:pointer;}
-.cmd-row:hover{border-color:var(--amber-dim);}
-.cmd-row-head{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;}
-.cmd-name{font-family:var(--mono);font-weight:700;color:var(--amber);min-width:100px;flex-shrink:0;}
-.cmd-desc{color:var(--text-dim);font-size:13.5px;}
-.cmd-body{margin-top:12px;}
-.cmd-label{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:6px;}
-.cmd-code{font-family:var(--mono);background:var(--panel-2);border:1px solid var(--border);border-radius:5px;padding:9px 12px;font-size:12.5px;margin-bottom:8px;color:var(--text);overflow-x:auto;white-space:pre;}
-.cmd-empty{color:var(--text-dim);text-align:center;padding:30px 0;font-size:13.5px;}
+/* Shared "reference lookup" pattern -- search box + expandable rows --
+   used by both Command Center and the Acronym Glossary. */
+.ref-search{margin-bottom:16px;}
+.ref-row{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:8px;cursor:pointer;}
+.ref-row:hover{border-color:var(--amber-dim);}
+.ref-row.ref-static{cursor:default;}
+.ref-row.ref-static:hover{border-color:var(--border);}
+.ref-row-head{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;}
+.ref-key{font-family:var(--mono);font-weight:700;color:var(--amber);min-width:100px;flex-shrink:0;}
+.ref-desc{color:var(--text-dim);font-size:13.5px;}
+.ref-body{margin-top:12px;}
+.ref-label{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:6px;}
+.ref-code{font-family:var(--mono);background:var(--panel-2);border:1px solid var(--border);border-radius:5px;padding:9px 12px;font-size:12.5px;margin-bottom:8px;color:var(--text);overflow-x:auto;white-space:pre;}
+.ref-empty{color:var(--text-dim);text-align:center;padding:30px 0;font-size:13.5px;}
 
 .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
 .top-controls{margin-top:0;margin-bottom:16px;}
