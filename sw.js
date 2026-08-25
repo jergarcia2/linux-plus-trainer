@@ -9,7 +9,7 @@
      viewed they're available offline and never re-fetched needlessly.
    Bump CACHE_NAME whenever you want to force a clean slate for everyone. */
 
-const CACHE_NAME = 'linuxplus-examprep-v6';
+const CACHE_NAME = 'linuxplus-examprep-v7';
 const SHELL = [
   './',
   './index.html',
@@ -18,12 +18,14 @@ const SHELL = [
   './js/adaptive.js',
   './js/quiz.js',
   './js/pbq.js',
+  './js/commands.js',
   './js/app.js',
   './manifest.json',
   './data/bank.json',
   './data/chapters.json',
   './data/domains.json',
   './data/pbq_scenarios.json',
+  './data/commands.json',
 ];
 
 function isImageRequest(url) {

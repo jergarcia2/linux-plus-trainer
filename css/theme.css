@@ -146,6 +146,17 @@ h1{font-size:26px;margin:0 0 6px;color:var(--text);letter-spacing:-.01em;}
 .bd-letter{font-family:var(--mono);font-weight:700;margin-right:6px;}
 .bd-reason{color:var(--text-dim);white-space:pre-line;margin-top:3px;}
 
+.cmd-search{margin-bottom:16px;}
+.cmd-row{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:8px;cursor:pointer;}
+.cmd-row:hover{border-color:var(--amber-dim);}
+.cmd-row-head{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;}
+.cmd-name{font-family:var(--mono);font-weight:700;color:var(--amber);min-width:100px;flex-shrink:0;}
+.cmd-desc{color:var(--text-dim);font-size:13.5px;}
+.cmd-body{margin-top:12px;}
+.cmd-label{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:6px;}
+.cmd-code{font-family:var(--mono);background:var(--panel-2);border:1px solid var(--border);border-radius:5px;padding:9px 12px;font-size:12.5px;margin-bottom:8px;color:var(--text);overflow-x:auto;white-space:pre;}
+.cmd-empty{color:var(--text-dim);text-align:center;padding:30px 0;font-size:13.5px;}
+
 .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
 .top-controls{margin-top:0;margin-bottom:16px;}
 .btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:6px;cursor:pointer;font-size:13.5px;font-weight:600;}

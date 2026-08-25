@@ -17,6 +17,7 @@
   <div class="brand">xk0-006 <span>// linux+ exam prep</span></div>
   <div class="top-actions">
     <button class="tbtn" id="themeBtn">Light</button>
+    <button class="tbtn" id="commandsBtn">Commands</button>
     <button class="tbtn" id="statsBtn">My Stats</button>
     <button class="tbtn" id="installBtn" class="hidden">Install</button>
   </div>
@@ -206,6 +207,14 @@
     <div id="readinessNextStep" class="next-step-box"></div>
   </section>
 
+  <!-- ===================== COMMAND CENTER ===================== -->
+  <section id="commandsScreen" class="screen hidden">
+    <div class="screen-header-row"><h1 class="screen-h1">Command Center</h1><button class="btn" id="commandsBackBtn">Back</button></div>
+    <div class="sub">Quick reference for <b id="cmdCount">0</b> commands that show up across the XK0-006 objectives — syntax, examples, and an exam tip for each. Tap a command to expand it.</div>
+    <input type="text" id="cmdSearch" class="select cmd-search" placeholder="Search commands...">
+    <div id="cmdList"></div>
+  </section>
+
   <!-- ===================== PBQ ===================== -->
   <section id="pbqScreen" class="screen hidden pbq-wide">
     <div class="progress-row"><span>SCENARIO <b id="pbqNum"></b> / <span id="pbqTotal"></span></span><span id="pbqBadge" class="chip"></span></div>
@@ -238,6 +247,7 @@
 <script src="js/adaptive.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/pbq.js"></script>
+<script src="js/commands.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
